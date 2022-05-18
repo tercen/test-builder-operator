@@ -1,0 +1,13 @@
+{
+  "kind": "OperatorUnitTest",
+  "name": "Basic Run",
+  "namespace": "ut0",
+  "inputDataUri": "autodata_1.csv",
+  "outputDataUri": "table_1.csv",
+  "columns": ["sp", "sex"],
+  "rows": [],
+  "colors": [],
+  "labels": [],
+  "yAxis": "y_values",
+  "xAxis": ""
+}
