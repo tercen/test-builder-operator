@@ -1,0 +1,18 @@
+{
+  "kind": "OperatorUnitTest",
+  "name": "auto_generated_1",
+  "namespace": "ds0",
+  "inputDataUri": "auto_generated_1_in.csv",
+  "outputDataUri": [
+    "auto_generated_1_out_1.csv",
+    "auto_generated_1_out_2.csv"
+  ],
+  "columns": ["sp", "sex"],
+  "rows": [],
+  "colors": [],
+  "labels": [],
+  "yAxis": "y_values",
+  "xAxis": "",
+  "generatedOn": "05/18/2022 03:18:29 PM 2022",
+  "version": "a02ca44"
+}
