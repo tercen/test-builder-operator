@@ -15,5 +15,5 @@
   "xAxis": "",
   "generatedOn": "05/20/2022 02:50:06 PM 2022",
   "version": "a2d4663",
-  "inputFileUris": "hospitals.csv.zip"
+  "inputFileUris": ["hospitals.csv.zip"]
 }
