@@ -15,7 +15,8 @@ read_doc_id <- function(ctx, documentId){
   
   hosp <- hosp %>%
     select('Facility.Name', 'Rating.Safety', 'Procedure.Heart.Attack.Value') %>%
-    mutate(.ci=0)
+    mutate(.ci=0) %>% 
+    mutate_at(".ci", as.integer)
   
   return(hosp)
   
@@ -34,7 +35,7 @@ tbl<- ctx %>%
   ctx$save()
 
 # http://127.0.0.1:5402/test-team/w/644ee03767c11f751a0614ac820a4da0/ds/414a0287-55df-48b6-ac83-825a6a90a7c6
-# source("/home/rstudio/projects/test_builder_operator/test_utils.R")
+#source("/home/rstudio/projects/test_builder_operator/test_utils.R")
 
 #build_test_data( tbl, ctx, "auto_generated_1",
 #                 test_folder = "/home/rstudio/projects/test_builder_operator/tests",

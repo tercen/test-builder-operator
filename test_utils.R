@@ -113,6 +113,7 @@ build_test_data <- function( out_table, ctx, test_name,
   # @TODO
   # Add support for lists of tables & associated row/cols
   out_tbl_files <- c()
+  
   out_tbl_files <- append( out_tbl_files, 
                            unbox(paste0(test_name, '_out_1.csv') ))
   write.csv(out_table,
@@ -187,6 +188,7 @@ build_test_data <- function( out_table, ctx, test_name,
   json_file <- file.path(test_folder, paste0(test_name, '.json'))
 
   write(json_data, json_file) 
+  
   
   write.csv(in_tbl, in_tbl_file, row.names = FALSE)
 }
