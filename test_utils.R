@@ -150,19 +150,19 @@ build_test_data <- function( out_table, ctx, test_name,
               row.names = FALSE)
   }
   
-  json_data = list("kind"="OperatorUnitTest",
-                   "name"=test_name,
-                   "namespace"=namespace,
-                   "inputDataUri"=basename(in_tbl_file),
+  json_data = list("kind"=unbox("OperatorUnitTest"),
+                   "name"=unbox(test_name),
+                   "namespace"=unbox(namespace),
+                   "inputDataUri"=unbox(basename(in_tbl_file)),
                    "outputDataUri"=out_tbl_files,
                    "columns"=if(unname(unlist(ctx$cnames)) == "") list() else c(unname(unlist(ctx$cnames))),
                    "rows"=if(unname(unlist(ctx$rnames)) == "") list() else c(unname(unlist(ctx$rnames))),
                    "colors"=ctx$colors,
                    "labels"=ctx$labels,
-                   "yAxis"=yAxis,
-                   "xAxis"=xAxis,
-                   "generatedOn"=format(Sys.time(), "%x %X %Y"),
-                   "version"=version)
+                   "yAxis"=unbox(yAxis),
+                   "xAxis"=unbox(xAxis),
+                   "generatedOn"=unbox(format(Sys.time(), "%x %X %Y")),
+                   "version"=unbox(version))
   
   if( length(docIdMapping) > 0 ){
     fileUris <- unname((docIdMapping))
