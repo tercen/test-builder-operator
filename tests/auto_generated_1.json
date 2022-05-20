@@ -7,7 +7,7 @@
     "auto_generated_1_out_1.csv",
     "auto_generated_1_out_2.csv"
   ],
-  "columns": "documentId",
+  "columns": ["documentId"],
   "rows": [],
   "colors": [],
   "labels": [],
