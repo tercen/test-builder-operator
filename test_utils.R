@@ -112,9 +112,9 @@ build_test_data <- function( out_table, ctx, test_name,
   
   # @TODO
   # Add support for lists of tables & associated row/cols
-  out_tbl_files <- list()
+  out_tbl_files <- c()
   out_tbl_files <- append( out_tbl_files, 
-                           paste0(test_name, '_out_1.csv') )
+                           unbox(paste0(test_name, '_out_1.csv') ))
   write.csv(out_table,
             file.path(test_folder, paste0(test_name, '_out_1.csv') ) ,
             row.names = FALSE)
@@ -122,7 +122,7 @@ build_test_data <- function( out_table, ctx, test_name,
   
   if(has_col_tbl == TRUE){
     out_tbl_files <- append( out_tbl_files, 
-                             paste0(test_name, '_out_2.csv') )
+                             unbox(paste0(test_name, '_out_2.csv')) )
     
     if( length(docIdMapping) > 0 ){
       # Find documentId instances and replace them
@@ -143,7 +143,7 @@ build_test_data <- function( out_table, ctx, test_name,
   
   if(has_row_tbl == TRUE){
     out_tbl_files <- append( out_tbl_files, 
-                             paste0(test_name, '_out_3.csv') )
+                             unbox(paste0(test_name, '_out_3.csv')) )
     
     write.csv(in_rtbl %>% select(-".ri"),
               file.path(test_folder, paste0(test_name, '_out_3.csv') ) ,

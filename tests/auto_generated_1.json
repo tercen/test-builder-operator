@@ -3,17 +3,14 @@
   "name": "auto_generated_1",
   "namespace": "ds2",
   "inputDataUri": "auto_generated_1_in.csv",
-  "outputDataUri": [
-    ["auto_generated_1_out_1.csv"],
-    ["auto_generated_1_out_2.csv"]
-  ],
+  "outputDataUri": ["auto_generated_1_out_1.csv", "auto_generated_1_out_2.csv"],
   "columns": ["documentId"],
   "rows": [],
   "colors": [],
   "labels": [],
   "yAxis": "",
   "xAxis": "",
-  "generatedOn": "05/20/2022 08:59:01 PM 2022",
-  "version": "9c4bc02",
+  "generatedOn": "05/20/2022 09:04:03 PM 2022",
+  "version": "302fde9",
   "inputFileUris": ["hospitals.csv.zip"]
 }
