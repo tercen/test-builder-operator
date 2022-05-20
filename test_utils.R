@@ -150,12 +150,20 @@ build_test_data <- function( out_table, ctx, test_name,
               row.names = FALSE)
   }
   
+  unbox_cnames <- lapply( c(unname(unlist(ctx$cnames))), function(x){
+      unbox(x)
+  })
+  
+  unbox_rnames <- lapply( c(unname(unlist(ctx$rnames))), function(x){
+    unbox(x)
+  })
+  
   json_data = list("kind"=unbox("OperatorUnitTest"),
                    "name"=unbox(test_name),
                    "namespace"=unbox(namespace),
                    "inputDataUri"=unbox(basename(in_tbl_file)),
                    "outputDataUri"=out_tbl_files,
-                   "columns"=if(unname(unlist(ctx$cnames)) == "") list() else c(unname(unlist(ctx$cnames))),
+                   "columns"=if(unname(unlist(ctx$cnames)) == "") list() else unbox_cnames,
                    "rows"=if(unname(unlist(ctx$rnames)) == "") list() else c(unname(unlist(ctx$rnames))),
                    "colors"=ctx$colors,
                    "labels"=ctx$labels,
