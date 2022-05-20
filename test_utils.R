@@ -165,13 +165,10 @@ build_test_data <- function( out_table, ctx, test_name,
                    "version"=version)
   
   if( length(docIdMapping) > 0 ){
-    fileUris <- list()
-    # Find documentId instances and replace them
-    for( i in seq(1, length(docIdMapping))  ){
-      fileUris <- append(fileUris, unname(docIdMapping[i]))
-    }
+    fileUris <- unname((docIdMapping))
     
-    json_data <- c(json_data, "inputFileUris"=as.list(fileUris))
+    
+    json_data <- c(json_data, "inputFileUris"=list(fileUris))
     
   }
   

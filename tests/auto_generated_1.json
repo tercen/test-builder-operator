@@ -13,8 +13,7 @@
   "labels": [],
   "yAxis": "",
   "xAxis": "",
-  "generatedOn": "05/20/2022 02:34:19 PM 2022",
-  "version": "7cad159",
-  "inputFileUris1": "hospitals.csv.zip",
-  "inputFileUris2": "NA"
+  "generatedOn": "05/20/2022 02:50:06 PM 2022",
+  "version": "a2d4663",
+  "inputFileUris": "hospitals.csv.zip"
 }
