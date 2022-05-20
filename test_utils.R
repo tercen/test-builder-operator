@@ -88,12 +88,13 @@ build_test_data <- function( out_table, ctx, test_name,
   }
   
   if( length(docIdMapping) > 0 ){
+    
     # Find documentId instances and replace them
-    in_tbl <- lapply(docIdMapping, function(x){
-        in_tbl %>%
-        mutate_all( ~str_replace(., unlist(names(docIdMapping)[[1]]),
-                                 docIdMapping)[[1]])
-    })
+    for( i in seq(1, length(docIdMapping))  ){
+      in_tbl <- in_tbl %>%
+        mutate_all( ~str_replace(., unlist(names(docIdMapping[i])), unname(docIdMapping[i])) )
+    }
+    
   }
   
   # If no version is supplied, try to get the latest version in the repo,
@@ -125,15 +126,17 @@ build_test_data <- function( out_table, ctx, test_name,
     
     if( length(docIdMapping) > 0 ){
       # Find documentId instances and replace them
-      out_ctbl <- lapply(docIdMapping, function(x){
-        in_ctbl %>%
-          mutate_all( ~str_replace(., unlist(names(docIdMapping)[[1]]),
-                                   docIdMapping)[[1]])
-      }) %>% select(-".ci")
+      out_ctbl <- in_ctbl
+      
+      
+      for( i in seq(1, length(docIdMapping))  ){
+        out_ctbl <- out_ctbl %>%
+          mutate_all( ~str_replace(., unlist(names(docIdMapping[i])), unname(docIdMapping[i])) )
+      }
     }
     
     
-    write.csv(out_ctbl,
+    write.csv(out_ctbl %>% select(-".ci"),
               file.path(test_folder, paste0(test_name, '_out_2.csv') ) ,
               row.names = FALSE)
   }
