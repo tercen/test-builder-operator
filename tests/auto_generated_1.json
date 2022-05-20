@@ -1,19 +1,19 @@
 {
-  "kind": "OperatorUnitTest",
-  "name": "auto_generated_1",
-  "namespace": "ds2",
-  "inputDataUri": "auto_generated_1_in.csv",
+  "kind": ["OperatorUnitTest"],
+  "name": ["auto_generated_1"],
+  "namespace": ["ds2"],
+  "inputDataUri": ["auto_generated_1_in.csv"],
   "outputDataUri": [
-    "auto_generated_1_out_1.csv",
-    "auto_generated_1_out_2.csv"
+    ["auto_generated_1_out_1.csv"],
+    ["auto_generated_1_out_2.csv"]
   ],
   "columns": ["documentId"],
   "rows": [],
   "colors": [],
   "labels": [],
-  "yAxis": "",
-  "xAxis": "",
-  "generatedOn": "05/20/2022 02:50:06 PM 2022",
-  "version": "a2d4663",
+  "yAxis": [""],
+  "xAxis": [""],
+  "generatedOn": ["05/20/2022 08:30:03 PM 2022"],
+  "version": ["151f338"],
   "inputFileUris": ["hospitals.csv.zip"]
 }

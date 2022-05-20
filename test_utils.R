@@ -155,8 +155,8 @@ build_test_data <- function( out_table, ctx, test_name,
                    "namespace"=namespace,
                    "inputDataUri"=basename(in_tbl_file),
                    "outputDataUri"=out_tbl_files,
-                   "columns"=if(unname(unlist(ctx$cnames)) == "") list() else unname(unlist(ctx$cnames)),
-                   "rows"=if(unname(unlist(ctx$rnames)) == "") list() else unname(unlist(ctx$rnames)),
+                   "columns"=if(unname(unlist(ctx$cnames)) == "") list() else c(unname(unlist(ctx$cnames))),
+                   "rows"=if(unname(unlist(ctx$rnames)) == "") list() else c(unname(unlist(ctx$rnames))),
                    "colors"=ctx$colors,
                    "labels"=ctx$labels,
                    "yAxis"=yAxis,
@@ -173,12 +173,13 @@ build_test_data <- function( out_table, ctx, test_name,
   }
   
   
-  json_data <- toJSON(json_data, pretty=TRUE, auto_unbox = TRUE,
+  json_data <- toJSON(json_data, pretty=TRUE, auto_unbox = FALSE,
                       digits=16)
   
   json_file <- file.path(test_folder, paste0(test_name, '.json'))
 
   write(json_data, json_file) 
+  
   write.csv(in_tbl, in_tbl_file, row.names = FALSE)
 }
 
