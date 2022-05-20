@@ -89,7 +89,7 @@ build_test_data <- function( out_table, ctx, test_name,
   
   if( length(docIdMapping) > 0 ){
     # Find documentId instances and replace them
-    lapply(docIdMapping, function(x){
+    in_tbl <- lapply(docIdMapping, function(x){
         in_tbl %>%
         mutate_all( ~str_replace(., unlist(names(docIdMapping)[[1]]),
                                  docIdMapping)[[1]])
@@ -123,7 +123,17 @@ build_test_data <- function( out_table, ctx, test_name,
     out_tbl_files <- append( out_tbl_files, 
                              paste0(test_name, '_out_2.csv') )
     
-    write.csv(in_ctbl %>% select(-".ci"),
+    if( length(docIdMapping) > 0 ){
+      # Find documentId instances and replace them
+      out_ctbl <- lapply(docIdMapping, function(x){
+        in_ctbl %>%
+          mutate_all( ~str_replace(., unlist(names(docIdMapping)[[1]]),
+                                   docIdMapping)[[1]])
+      }) %>% select(-".ci")
+    }
+    
+    
+    write.csv(out_ctbl,
               file.path(test_folder, paste0(test_name, '_out_2.csv') ) ,
               row.names = FALSE)
   }
