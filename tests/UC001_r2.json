@@ -12,12 +12,10 @@
   "colors": [
     ["Rating.Imaging"]
   ],
-  "labels": [
-    ["Facility.State"]
-  ],
+  "labels": "Facility.State",
   "yAxis": "",
   "xAxis": "x_values",
-  "generatedOn": "05/23/2022 07:05:12 PM 2022",
+  "generatedOn": "05/23/2022 07:15:00 PM 2022",
   "version": "0.0.1",
   "inputFileUris": ["hospitals.csv.zip"],
   "r2": [0.99],
