@@ -182,7 +182,7 @@ build_test_data <- function( out_table, ctx, test_name,
                    "columns"=if(unname(unlist(ctx$cnames)) == "") list() else unbox_cnames,
                    "rows"=if(unname(unlist(ctx$rnames)) == "") list() else c(unname(unlist(ctx$rnames))),
                    "colors"=if(unname(unlist(ctx$colors)) == "") list() else unbox_colors,
-                   "labels"=if(unname(unlist(ctx$labels)) == "") list() else unbox_labels,
+                   "labels"=if(is.null(unname(unlist(ctx$labels))) ) list() else unbox_labels,
                    "yAxis"=unbox(yAxis),
                    "xAxis"=unbox(xAxis),
                    "generatedOn"=unbox(format(Sys.time(), "%x %X %Y")),
@@ -190,20 +190,19 @@ build_test_data <- function( out_table, ctx, test_name,
   
   if( length(docIdMapping) > 0 ){
     fileUris <- unname((docIdMapping))
-    
-    
     json_data <- c(json_data, "inputFileUris"=list(fileUris))
   }
   
   if( !is.null( absTol )){
-    json_data <- c(json_data, "absTol"=unbox(absTol) )
+    json_data <- c(json_data, list("absTol"=unbox(absTol)) )
   }
+  
   if( !is.null( relTol )){
-    json_data <- c(json_data, "relTol"=unbox(relTol))
+    json_data <- c(json_data, list("relTol"=unbox(relTol)))
   }
   if( !is.null( r2 )){
-    json_data <- c(json_data, "r2"=unbox(r2))
-    json_data <- c(json_data, "equalityMethod"="R2")
+    json_data <- c(json_data, list("r2"=unbox(r2)))
+    json_data <- c(json_data, list("equalityMethod"=unbox("R2")))
   }
 
   

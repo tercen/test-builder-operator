@@ -8,13 +8,15 @@
     "Facility.Type"
   ],
   "rows": ["Rating.Mortality"],
-  "colors": "Rating.Imaging",
+  "colors": [
+    "Rating.Imaging"
+  ],
   "labels": [],
   "yAxis": "",
   "xAxis": "",
-  "generatedOn": "05/23/2022 07:26:08 PM 2022",
+  "generatedOn": "05/23/2022 07:41:38 PM 2022",
   "version": "0.0.1",
   "inputFileUris": ["hospitals.csv.zip"],
-  "r2": [0.99],
-  "equalityMethod": ["R2"]
+  "r2": 0.99,
+  "equalityMethod": "R2"
 }
