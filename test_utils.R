@@ -173,7 +173,7 @@ build_test_data <- function( out_table, ctx, test_name,
                    "outputDataUri"=out_tbl_files,
                    "columns"=if(unname(unlist(ctx$cnames)) == "") list() else unbox_cnames,
                    "rows"=if(unname(unlist(ctx$rnames)) == "") list() else c(unname(unlist(ctx$rnames))),
-                   "colors"=ctx$colors,
+                   "colors"=if( length(ctx$colors) > 0) unbox(ctx$colors[[1]]) else list(),
                    "labels"=if( length(ctx$labels) > 0) unbox(ctx$labels[[1]]) else list(),
                    "yAxis"=unbox(yAxis),
                    "xAxis"=unbox(xAxis),
@@ -188,13 +188,13 @@ build_test_data <- function( out_table, ctx, test_name,
   }
   
   if( !is.null( absTol )){
-    json_data <- c(json_data, "absTol"=absTol)
+    json_data <- c(json_data, "absTol"=unbox(absTol) )
   }
   if( !is.null( relTol )){
-    json_data <- c(json_data, "relTol"=relTol)
+    json_data <- c(json_data, "relTol"=unbox(relTol))
   }
   if( !is.null( r2 )){
-    json_data <- c(json_data, "r2"=r2)
+    json_data <- c(json_data, "r2"=unbox(r2))
     json_data <- c(json_data, "equalityMethod"="R2")
   }
 

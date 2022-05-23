@@ -9,13 +9,11 @@
     "Facility.Type"
   ],
   "rows": ["Rating.Mortality"],
-  "colors": [
-    ["Rating.Imaging"]
-  ],
+  "colors": "Rating.Imaging",
   "labels": "Facility.State",
   "yAxis": "",
   "xAxis": "x_values",
-  "generatedOn": "05/23/2022 07:15:00 PM 2022",
+  "generatedOn": "05/23/2022 07:17:44 PM 2022",
   "version": "0.0.1",
   "inputFileUris": ["hospitals.csv.zip"],
   "absTol": [0.001]
