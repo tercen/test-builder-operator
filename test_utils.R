@@ -164,6 +164,14 @@ build_test_data <- function( out_table, ctx, test_name,
   })
   
   
+  unbox_labels <- lapply( c(unname(unlist(ctx$labels))), function(x){
+    unbox(x)
+  })
+  
+  unbox_colors <- lapply( c(unname(unlist(ctx$colors))), function(x){
+    unbox(x)
+  })
+  
   
   # Adicionar aqui os metodos de comapração
   json_data = list("kind"=unbox("OperatorUnitTest"),
@@ -173,8 +181,8 @@ build_test_data <- function( out_table, ctx, test_name,
                    "outputDataUri"=out_tbl_files,
                    "columns"=if(unname(unlist(ctx$cnames)) == "") list() else unbox_cnames,
                    "rows"=if(unname(unlist(ctx$rnames)) == "") list() else c(unname(unlist(ctx$rnames))),
-                   "colors"=if( length(ctx$colors) > 0) unbox(ctx$colors[[1]]) else list(),
-                   "labels"=ctx$labels,
+                   "colors"=if(unname(unlist(ctx$colors)) == "") list() else unbox_colors,
+                   "labels"=if(unname(unlist(ctx$labels)) == "") list() else unbox_labels,
                    "yAxis"=unbox(yAxis),
                    "xAxis"=unbox(xAxis),
                    "generatedOn"=unbox(format(Sys.time(), "%x %X %Y")),
