@@ -1,0 +1,24 @@
+{
+  "kind": "OperatorUnitTest",
+  "name": "UC001_absTol",
+  "namespace": "ds0",
+  "inputDataUri": "UC001_absTol_in.csv",
+  "outputDataUri": ["UC001_absTol_out_1.csv", "UC001_absTol_out_2.csv", "UC001_absTol_out_3.csv"],
+  "columns": [
+    "Rating.Effectiveness",
+    "Facility.Type"
+  ],
+  "rows": ["Rating.Mortality"],
+  "colors": [
+    ["Rating.Imaging"]
+  ],
+  "labels": [
+    ["Facility.State"]
+  ],
+  "yAxis": "",
+  "xAxis": "x_values",
+  "generatedOn": "05/23/2022 07:05:11 PM 2022",
+  "version": "0.0.1",
+  "inputFileUris": ["hospitals.csv.zip"],
+  "absTol": [0.001]
+}

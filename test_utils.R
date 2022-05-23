@@ -1,8 +1,12 @@
 library(stringr)
 
 
+# docIdMapping=c("docId number"="filename")
+# quality_method=c("R2", "comp")
+
 build_test_data <- function( out_table, ctx, test_name, 
                              test_folder = NULL, version = '',
+                             absTol=NULL, relTol=NULL, r2=NULL,
                              docIdMapping=c()){
   if( is.null(test_folder)){
     test_folder <- paste0( getwd(), '/tests' )
@@ -159,6 +163,9 @@ build_test_data <- function( out_table, ctx, test_name,
     unbox(x)
   })
   
+  
+  
+  # Adicionar aqui os metodos de comapração
   json_data = list("kind"=unbox("OperatorUnitTest"),
                    "name"=unbox(test_name),
                    "namespace"=unbox(namespace),
@@ -178,9 +185,19 @@ build_test_data <- function( out_table, ctx, test_name,
     
     
     json_data <- c(json_data, "inputFileUris"=list(fileUris))
-    
   }
   
+  if( !is.null( absTol )){
+    json_data <- c(json_data, "absTol"=absTol)
+  }
+  if( !is.null( relTol )){
+    json_data <- c(json_data, "relTol"=relTol)
+  }
+  if( !is.null( r2 )){
+    json_data <- c(json_data, "r2"=r2)
+    json_data <- c(json_data, "equalityMethod"="R2")
+  }
+
   
   json_data <- toJSON(json_data, pretty=TRUE, auto_unbox = FALSE,
                       digits=16)

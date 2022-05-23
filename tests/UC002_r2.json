@@ -1,0 +1,22 @@
+{
+  "kind": "OperatorUnitTest",
+  "name": "UC002_r2",
+  "namespace": "ds00",
+  "inputDataUri": "UC002_r2_in.csv",
+  "outputDataUri": ["UC002_r2_out_1.csv", "UC002_r2_out_2.csv", "UC002_r2_out_3.csv"],
+  "columns": [
+    "Facility.Type"
+  ],
+  "rows": ["Rating.Mortality"],
+  "colors": [
+    ["Rating.Imaging"]
+  ],
+  "labels": [],
+  "yAxis": "",
+  "xAxis": "",
+  "generatedOn": "05/23/2022 07:05:13 PM 2022",
+  "version": "0.0.1",
+  "inputFileUris": ["hospitals.csv.zip"],
+  "r2": [0.99],
+  "equalityMethod": ["R2"]
+}
