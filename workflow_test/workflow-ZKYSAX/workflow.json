@@ -1,0 +1,681 @@
+{
+  "kind": "Workflow",
+  "id": "644ee03767c11f751a0614ac820a4da0",
+  "isDeleted": false,
+  "rev": "38-6341cfffea9c7a8e0687e656d3874374",
+  "description": "",
+  "name": "test_creation_wkf",
+  "createdBy": "test",
+  "acl": {
+    "kind": "Acl",
+    "owner": "test-team",
+    "aces": []
+  },
+  "createdDate": {
+    "kind": "Date",
+    "value": "2022-05-16T18:09:45.565093Z"
+  },
+  "lastModifiedDate": {
+    "kind": "Date",
+    "value": "2022-05-23T12:34:49.365291Z"
+  },
+  "urls": [],
+  "tags": [],
+  "meta": [],
+  "url": {
+    "kind": "Url",
+    "uri": ""
+  },
+  "version": "",
+  "authors": [],
+  "isPublic": false,
+  "projectId": "923e44b693eadbaa45cd5ceee3010985",
+  "folderId": "",
+  "links": [
+    {
+      "kind": "Link",
+      "id": "f4ea0578-d0b8-442b-9385-686ed109c33e",
+      "inputId": "c15f4867-126d-4380-8126-7383f2cca690-i-0",
+      "outputId": "66e4b746-647b-4497-b420-a2a2f82b48de-o-0"
+    },
+    {
+      "kind": "Link",
+      "id": "f4ea0578-d0b8-442b-9385-686ed109c33e",
+      "inputId": "3d88d8f8-0388-4748-93dc-3262262b6c34-i-0",
+      "outputId": "66e4b746-647b-4497-b420-a2a2f82b48de-o-0"
+    }
+  ],
+  "steps": [
+    {
+      "kind": "TableStep",
+      "id": "66e4b746-647b-4497-b420-a2a2f82b48de",
+      "groupId": "",
+      "name": "hospitals.csv",
+      "inputs": [],
+      "outputs": [
+        {
+          "kind": "OutputPort",
+          "id": "66e4b746-647b-4497-b420-a2a2f82b48de-o-0",
+          "linkType": "relation",
+          "name": "table"
+        }
+      ],
+      "rectangle": {
+        "kind": "Rectangle",
+        "extent": {
+          "kind": "Point",
+          "x": 95.33370971679688,
+          "y": 55.0
+        },
+        "topLeft": {
+          "kind": "Point",
+          "x": 1033.505,
+          "y": 263.5
+        }
+      },
+      "state": {
+        "kind": "StepState",
+        "taskId": "",
+        "taskState": {
+          "kind": "DoneState"
+        }
+      },
+      "model": {
+        "kind": "TableStepModel",
+        "relation": {
+          "kind": "RenameRelation",
+          "id": "rename_8d00f6b7d8a98039e90f08f47b007fbb",
+          "relation": {
+            "kind": "SimpleRelation",
+            "id": "8d00f6b7d8a98039e90f08f47b007fbb",
+            "index": 0
+          },
+          "inNames": [
+            "Facility.Name",
+            "Facility.City",
+            "Facility.State",
+            "Facility.Type",
+            "Rating.Overall",
+            "Rating.Mortality",
+            "Rating.Safety",
+            "Rating.Readmission",
+            "Rating.Experience",
+            "Rating.Effectiveness",
+            "Rating.Timeliness",
+            "Rating.Imaging",
+            "Procedure.Heart Attack.Cost",
+            "Procedure.Heart Attack.Quality",
+            "Procedure.Heart Attack.Value",
+            "Procedure.Heart Failure.Cost",
+            "Procedure.Heart Failure.Quality",
+            "Procedure.Heart Failure.Value",
+            "Procedure.Pneumonia.Cost",
+            "Procedure.Pneumonia.Quality",
+            "Procedure.Pneumonia.Value",
+            "Procedure.Hip Knee.Cost",
+            "Procedure.Hip Knee.Quality",
+            "Procedure.Hip Knee.Value",
+            "8d00f6b7d8a98039e90f08f47b007fbb._rids",
+            "8d00f6b7d8a98039e90f08f47b007fbb.tlbId"
+          ],
+          "outNames": [
+            "Facility.Name",
+            "Facility.City",
+            "Facility.State",
+            "Facility.Type",
+            "Rating.Overall",
+            "Rating.Mortality",
+            "Rating.Safety",
+            "Rating.Readmission",
+            "Rating.Experience",
+            "Rating.Effectiveness",
+            "Rating.Timeliness",
+            "Rating.Imaging",
+            "Procedure.Heart Attack.Cost",
+            "Procedure.Heart Attack.Quality",
+            "Procedure.Heart Attack.Value",
+            "Procedure.Heart Failure.Cost",
+            "Procedure.Heart Failure.Quality",
+            "Procedure.Heart Failure.Value",
+            "Procedure.Pneumonia.Cost",
+            "Procedure.Pneumonia.Quality",
+            "Procedure.Pneumonia.Value",
+            "Procedure.Hip Knee.Cost",
+            "Procedure.Hip Knee.Quality",
+            "Procedure.Hip Knee.Value",
+            "rowId",
+            "tableId"
+          ]
+        }
+      }
+    },
+    {
+      "kind": "DataStep",
+      "id": "c15f4867-126d-4380-8126-7383f2cca690",
+      "groupId": "",
+      "name": "UC001",
+      "inputs": [
+        {
+          "kind": "InputPort",
+          "id": "c15f4867-126d-4380-8126-7383f2cca690-i-0",
+          "linkType": "relation",
+          "name": "data"
+        }
+      ],
+      "outputs": [
+        {
+          "kind": "OutputPort",
+          "id": "c15f4867-126d-4380-8126-7383f2cca690-o-0",
+          "linkType": "relation",
+          "name": "data"
+        }
+      ],
+      "rectangle": {
+        "kind": "Rectangle",
+        "extent": {
+          "kind": "Point",
+          "x": 88.99000000000001,
+          "y": 55.0
+        },
+        "topLeft": {
+          "kind": "Point",
+          "x": 885.6768548583987,
+          "y": 451.5
+        }
+      },
+      "state": {
+        "kind": "StepState",
+        "taskId": "",
+        "taskState": {
+          "kind": "InitState"
+        }
+      },
+      "model": {
+        "kind": "Crosstab",
+        "axis": {
+          "kind": "XYAxisList",
+          "rectangleSelections": [],
+          "xyAxis": [
+            {
+              "kind": "XYAxis",
+              "chart": {
+                "kind": "ChartPoint",
+                "name": "",
+                "properties": {
+                  "kind": "Properties",
+                  "properties": [],
+                  "propertyValues": []
+                },
+                "pointSize": 4
+              },
+              "colors": {
+                "kind": "Colors",
+                "factors": [
+                  {
+                    "kind": "Factor",
+                    "name": "Rating.Imaging",
+                    "type": "string"
+                  }
+                ],
+                "palette": {
+                  "kind": "CategoryPalette",
+                  "backcolor": 0,
+                  "properties": [],
+                  "colorList": {
+                    "kind": "ColorList",
+                    "name": ""
+                  },
+                  "stringColorElements": []
+                }
+              },
+              "errors": {
+                "kind": "Errors",
+                "factors": []
+              },
+              "labels": {
+                "kind": "Labels",
+                "factors": [
+                  {
+                    "kind": "Factor",
+                    "name": "Facility.State",
+                    "type": "string"
+                  }
+                ]
+              },
+              "xAxis": {
+                "kind": "Axis",
+                "axisExtent": {
+                  "kind": "Point",
+                  "x": 80.0,
+                  "y": 30.0
+                },
+                "axisSettings": {
+                  "kind": "AxisSettings",
+                  "properties": [],
+                  "propertyValues": []
+                },
+                "graphicalFactor": {
+                  "kind": "GraphicalFactor",
+                  "factor": {
+                    "kind": "Factor",
+                    "name": "Rating.Experience",
+                    "type": "string"
+                  },
+                  "rectangle": {
+                    "kind": "Rectangle",
+                    "extent": {
+                      "kind": "Point",
+                      "x": 0.0,
+                      "y": 0.0
+                    },
+                    "topLeft": {
+                      "kind": "Point",
+                      "x": 0.0,
+                      "y": 0.0
+                    }
+                  }
+                }
+              },
+              "yAxis": {
+                "kind": "Axis",
+                "axisExtent": {
+                  "kind": "Point",
+                  "x": 80.0,
+                  "y": 30.0
+                },
+                "axisSettings": {
+                  "kind": "AxisSettings",
+                  "properties": [],
+                  "propertyValues": []
+                },
+                "graphicalFactor": {
+                  "kind": "GraphicalFactor",
+                  "factor": {
+                    "kind": "Factor",
+                    "name": "Rating.Overall",
+                    "type": "double"
+                  },
+                  "rectangle": {
+                    "kind": "Rectangle",
+                    "extent": {
+                      "kind": "Point",
+                      "x": 0.0,
+                      "y": 0.0
+                    },
+                    "topLeft": {
+                      "kind": "Point",
+                      "x": 0.0,
+                      "y": 0.0
+                    }
+                  }
+                }
+              },
+              "taskId": ""
+            }
+          ]
+        },
+        "columnTable": {
+          "kind": "CrosstabTable",
+          "cellSize": 42.5,
+          "offset": 0,
+          "graphicalFactors": [
+            {
+              "kind": "GraphicalFactor",
+              "factor": {
+                "kind": "Factor",
+                "name": "Rating.Effectiveness",
+                "type": "string"
+              },
+              "rectangle": {
+                "kind": "Rectangle",
+                "extent": {
+                  "kind": "Point",
+                  "x": 200.0,
+                  "y": 30.0
+                },
+                "topLeft": {
+                  "kind": "Point",
+                  "x": 0.0,
+                  "y": 0.0
+                }
+              }
+            },
+            {
+              "kind": "GraphicalFactor",
+              "factor": {
+                "kind": "Factor",
+                "name": "Facility.Type",
+                "type": "string"
+              },
+              "rectangle": {
+                "kind": "Rectangle",
+                "extent": {
+                  "kind": "Point",
+                  "x": 0.0,
+                  "y": 30.0
+                },
+                "topLeft": {
+                  "kind": "Point",
+                  "x": 0.0,
+                  "y": 0.0
+                }
+              }
+            }
+          ],
+          "rectangleSelections": [],
+          "nRows": 20
+        },
+        "filters": {
+          "kind": "Filters",
+          "removeNaN": true,
+          "namedFilters": []
+        },
+        "operatorSettings": {
+          "kind": "OperatorSettings",
+          "namespace": "ds0",
+          "operatorRef": {
+            "kind": "OperatorRef",
+            "name": "",
+            "version": "",
+            "operatorId": "",
+            "operatorKind": "",
+            "propertyValues": [],
+            "url": {
+              "kind": "Url",
+              "uri": ""
+            }
+          },
+          "environment": []
+        },
+        "rowTable": {
+          "kind": "CrosstabTable",
+          "cellSize": 105.5,
+          "offset": 0,
+          "graphicalFactors": [
+            {
+              "kind": "GraphicalFactor",
+              "factor": {
+                "kind": "Factor",
+                "name": "Rating.Mortality",
+                "type": "string"
+              },
+              "rectangle": {
+                "kind": "Rectangle",
+                "extent": {
+                  "kind": "Point",
+                  "x": 80.0,
+                  "y": 0.0
+                },
+                "topLeft": {
+                  "kind": "Point",
+                  "x": 0.0,
+                  "y": 0.0
+                }
+              }
+            }
+          ],
+          "rectangleSelections": [],
+          "nRows": 4
+        },
+        "taskId": ""
+      },
+      "computedRelation": {
+        "kind": "Relation",
+        "id": "99080f4b-1e1d-4e75-b40b-42f3e726057a"
+      }
+    },
+    {
+      "kind": "DataStep",
+      "id": "3d88d8f8-0388-4748-93dc-3262262b6c34",
+      "groupId": "",
+      "name": "UC002",
+      "inputs": [
+        {
+          "kind": "InputPort",
+          "id": "3d88d8f8-0388-4748-93dc-3262262b6c34-i-0",
+          "linkType": "relation",
+          "name": "data"
+        }
+      ],
+      "outputs": [
+        {
+          "kind": "OutputPort",
+          "id": "3d88d8f8-0388-4748-93dc-3262262b6c34-o-0",
+          "linkType": "relation",
+          "name": "data"
+        }
+      ],
+      "rectangle": {
+        "kind": "Rectangle",
+        "extent": {
+          "kind": "Point",
+          "x": 88.99000000000001,
+          "y": 55.0
+        },
+        "topLeft": {
+          "kind": "Point",
+          "x": 1130.6768548583987,
+          "y": 458.5
+        }
+      },
+      "state": {
+        "kind": "StepState",
+        "taskId": "",
+        "taskState": {
+          "kind": "InitState"
+        }
+      },
+      "model": {
+        "kind": "Crosstab",
+        "axis": {
+          "kind": "XYAxisList",
+          "rectangleSelections": [],
+          "xyAxis": [
+            {
+              "kind": "XYAxis",
+              "chart": {
+                "kind": "ChartPoint",
+                "name": "",
+                "properties": {
+                  "kind": "Properties",
+                  "properties": [],
+                  "propertyValues": []
+                },
+                "pointSize": 4
+              },
+              "colors": {
+                "kind": "Colors",
+                "factors": [
+                  {
+                    "kind": "Factor",
+                    "name": "Rating.Imaging",
+                    "type": "string"
+                  }
+                ],
+                "palette": {
+                  "kind": "CategoryPalette",
+                  "backcolor": 0,
+                  "properties": [],
+                  "colorList": {
+                    "kind": "ColorList",
+                    "name": ""
+                  },
+                  "stringColorElements": []
+                }
+              },
+              "errors": {
+                "kind": "Errors",
+                "factors": []
+              },
+              "labels": {
+                "kind": "Labels",
+                "factors": []
+              },
+              "xAxis": {
+                "kind": "Axis",
+                "axisExtent": {
+                  "kind": "Point",
+                  "x": 80.0,
+                  "y": 30.0
+                },
+                "axisSettings": {
+                  "kind": "AxisSettings",
+                  "properties": [],
+                  "propertyValues": []
+                },
+                "graphicalFactor": {
+                  "kind": "GraphicalFactor",
+                  "factor": {
+                    "kind": "Factor",
+                    "name": "",
+                    "type": "string"
+                  },
+                  "rectangle": {
+                    "kind": "Rectangle",
+                    "extent": {
+                      "kind": "Point",
+                      "x": 0.0,
+                      "y": 0.0
+                    },
+                    "topLeft": {
+                      "kind": "Point",
+                      "x": 0.0,
+                      "y": 0.0
+                    }
+                  }
+                }
+              },
+              "yAxis": {
+                "kind": "Axis",
+                "axisExtent": {
+                  "kind": "Point",
+                  "x": 80.0,
+                  "y": 30.0
+                },
+                "axisSettings": {
+                  "kind": "AxisSettings",
+                  "properties": [],
+                  "propertyValues": []
+                },
+                "graphicalFactor": {
+                  "kind": "GraphicalFactor",
+                  "factor": {
+                    "kind": "Factor",
+                    "name": "Rating.Overall",
+                    "type": "double"
+                  },
+                  "rectangle": {
+                    "kind": "Rectangle",
+                    "extent": {
+                      "kind": "Point",
+                      "x": 0.0,
+                      "y": 0.0
+                    },
+                    "topLeft": {
+                      "kind": "Point",
+                      "x": 0.0,
+                      "y": 0.0
+                    }
+                  }
+                }
+              },
+              "taskId": ""
+            }
+          ]
+        },
+        "columnTable": {
+          "kind": "CrosstabTable",
+          "cellSize": 42.5,
+          "offset": 0,
+          "graphicalFactors": [
+            {
+              "kind": "GraphicalFactor",
+              "factor": {
+                "kind": "Factor",
+                "name": "Facility.Type",
+                "type": "string"
+              },
+              "rectangle": {
+                "kind": "Rectangle",
+                "extent": {
+                  "kind": "Point",
+                  "x": 0.0,
+                  "y": 30.0
+                },
+                "topLeft": {
+                  "kind": "Point",
+                  "x": 0.0,
+                  "y": 0.0
+                }
+              }
+            }
+          ],
+          "rectangleSelections": [],
+          "nRows": 5
+        },
+        "filters": {
+          "kind": "Filters",
+          "removeNaN": true,
+          "namedFilters": []
+        },
+        "operatorSettings": {
+          "kind": "OperatorSettings",
+          "namespace": "ds00",
+          "operatorRef": {
+            "kind": "OperatorRef",
+            "name": "",
+            "version": "",
+            "operatorId": "",
+            "operatorKind": "",
+            "propertyValues": [],
+            "url": {
+              "kind": "Url",
+              "uri": ""
+            }
+          },
+          "environment": []
+        },
+        "rowTable": {
+          "kind": "CrosstabTable",
+          "cellSize": 105.5,
+          "offset": 0,
+          "graphicalFactors": [
+            {
+              "kind": "GraphicalFactor",
+              "factor": {
+                "kind": "Factor",
+                "name": "Rating.Mortality",
+                "type": "string"
+              },
+              "rectangle": {
+                "kind": "Rectangle",
+                "extent": {
+                  "kind": "Point",
+                  "x": 80.0,
+                  "y": 0.0
+                },
+                "topLeft": {
+                  "kind": "Point",
+                  "x": 0.0,
+                  "y": 0.0
+                }
+              }
+            }
+          ],
+          "rectangleSelections": [],
+          "nRows": 4
+        },
+        "taskId": ""
+      },
+      "computedRelation": {
+        "kind": "Relation",
+        "id": "dbf625cb-9fd6-454e-ac5d-74031ef6aaa8"
+      }
+    }
+  ],
+  "offset": {
+    "kind": "Point",
+    "x": -28.0,
+    "y": -40.0
+  }
+}
