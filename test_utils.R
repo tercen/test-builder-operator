@@ -108,11 +108,13 @@ build_test_data <- function( out_table, ctx, test_name,
   }
   
   if(unname(unlist(ctx$colors)) != ""){
-    clrs <- as.data.frame(ctx$colors)
-    clrs <- clrs %>% 
-      mutate(".colorLevels"=seq(0,nrow(clrs)-1))
-    in_tbl <- dplyr::full_join( in_tbl,  clrs, by=".colorLevels" ) %>%
-      select(-".colorLevels")
+    clrs <- ctx$colors
+    
+    for(i in seq(1,length(clrs))){
+      in_tbl <- cbind(in_tbl, ctx$select(ctx$colors[[i]]) )
+    }
+    
+    
   }
   
   if( length(docIdMapping) > 0 ){
