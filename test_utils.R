@@ -37,6 +37,18 @@ build_test_data <- function( out_table, ctx, test_name,
     xAxis <- "x_values"
     has_x <- TRUE
   }
+  
+  if(!is.null(unname(unlist(ctx$labels))) ){
+    ulbl <- unname(unlist(ctx$labels))
+    for(i in seq(1, length(ulbl))){
+      select_names <- append(select_names, ulbl[[i]])
+    }
+  }
+  
+  if(unname(unlist(ctx$colors)) != ""){
+    select_names <- append(select_names, ".colorLevels")
+  }
+  
   # if( ".ci" %in% proj_names){select_names <- append(select_names, ".ci")  }
   # if( ".ri" %in% proj_names){select_names <- append(select_names, ".ri")  }
   
@@ -44,7 +56,7 @@ build_test_data <- function( out_table, ctx, test_name,
   in_tbl <- ctx$select(select_names) 
   in_rtbl <- ctx$rselect()
   in_ctbl <- ctx$cselect()
-
+  
   
   
   if(has_y == TRUE){
@@ -60,6 +72,10 @@ build_test_data <- function( out_table, ctx, test_name,
   
   has_row_tbl <- FALSE
   has_col_tbl <- FALSE
+  
+  #TODO --> ADD THIS
+  has_clr_tbl <- FALSE
+  has_lbl_tbl <- FALSE
   
   # .all -> Empty row or column projection table
   if( names(in_rtbl) != ".all" ){
@@ -89,6 +105,14 @@ build_test_data <- function( out_table, ctx, test_name,
     }, error=function(cond){
       # Ignore, no .ci column in result
     })
+  }
+  
+  if(unname(unlist(ctx$colors)) != ""){
+    clrs <- as.data.frame(ctx$colors)
+    clrs <- clrs %>% 
+      mutate(".colorLevels"=seq(0,nrow(clrs)-1))
+    in_tbl <- dplyr::full_join( in_tbl,  clrs, by=".colorLevels" ) %>%
+      select(-".colorLevels")
   }
   
   if( length(docIdMapping) > 0 ){

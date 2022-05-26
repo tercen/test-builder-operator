@@ -33,7 +33,7 @@ for( i in seq(1, length(stepIdList))){
   } )
 
   step_name <- unlist(current_step[vapply(current_step, Negate(is.null), NA)])
-  
+  print(step_name)
   tbl<- ctx %>%
     select(.y, .ci, .ri) %>% 
     group_by(.ci, .ri) %>%
