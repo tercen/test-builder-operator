@@ -23,7 +23,7 @@ build_test_data <- function( out_table, ctx, test_name,
   yAxis <- ''
   xAxis <- ''
 
-  has_y <- FALSE  
+  has_y <- TRUE  
   has_x <- FALSE  
   
   # Check whether y and x axis are set
@@ -70,6 +70,7 @@ build_test_data <- function( out_table, ctx, test_name,
   }
   
   
+  
   has_row_tbl <- FALSE
   has_col_tbl <- FALSE
   
@@ -114,7 +115,7 @@ build_test_data <- function( out_table, ctx, test_name,
       in_tbl <- cbind(in_tbl, ctx$select(ctx$colors[[i]]) )
     }
     
-    
+    in_tbl <- in_tbl %>% select(-".colorLevels")
   }
   
   if( length(docIdMapping) > 0 ){
