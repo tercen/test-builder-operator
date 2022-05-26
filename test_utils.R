@@ -29,7 +29,7 @@ build_test_data <- function( out_table, ctx, test_name,
   # Check whether y and x axis are set
   # if( ".y" %in% proj_names){
   #   select_names <- append(select_names, ".y")
-  #   yAxis <- "y_values"
+  yAxis <- "y_values"
   #   has_y <- TRUE
   # }
   if( ".x" %in% proj_names){
