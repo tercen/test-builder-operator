@@ -40,23 +40,19 @@ for( i in seq(1, length(stepIdList))){
     summarise(mean = cell_mean(.y)) %>%
     ctx$addNamespace() 
   
-  # Equality
-  build_test_data( tbl, ctx, step_name,
-                   version = '0.0.1')#,
-                   #docIdMapping = c("32d4b2986b98f3ebd5b5baa990000148"="hospitals.csv.zip"))
-  
+
   # Tolerance
-  build_test_data( tbl, ctx, paste0(step_name, "_absTol"),
+  tim::build_test_data( tbl, ctx, paste0(step_name, "_absTol"),
                    version = '0.0.1',
                    absTol = 0.001)
   
-  build_test_data( tbl, ctx, paste0(step_name, "_relTol"),
+  tim::build_test_data( tbl, ctx, paste0(step_name, "_relTol"),
                    version = '0.0.1',
                    relTol = 0.01)
   
   
   # Correlation
-  build_test_data( tbl, ctx, paste0(step_name, "_r2"),
+  tim::build_test_data( tbl, ctx, paste0(step_name, "_r2"),
                    version = '0.0.1',
                    r2 = 0.99)
 }
