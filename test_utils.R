@@ -154,10 +154,10 @@ build_test_data <- function( out_table, ctx, test_name,
   if(has_col_tbl == TRUE){
     out_tbl_files <- append( out_tbl_files, 
                              unbox(paste0(test_name, '_out_2.csv')) )
-    
+    out_ctbl <- in_ctbl
     if( length(docIdMapping) > 0 ){
       # Find documentId instances and replace them
-      out_ctbl <- in_ctbl
+      
       
       
       for( i in seq(1, length(docIdMapping))  ){

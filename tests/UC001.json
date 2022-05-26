@@ -17,7 +17,6 @@
   ],
   "yAxis": "",
   "xAxis": "x_values",
-  "generatedOn": "05/26/2022 12:36:14 AM 2022",
-  "version": "0.0.1",
-  "inputFileUris": ["hospitals.csv.zip"]
+  "generatedOn": "05/26/2022 12:42:04 AM 2022",
+  "version": "0.0.1"
 }
