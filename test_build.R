@@ -20,11 +20,6 @@ stepIdList <- c("c15f4867-126d-4380-8126-7383f2cca690",
                 "a18c19cb-52e7-427c-a1fa-ad7af76dce95")
 
 
-# propDictList <- list(
-#                    "a18c19cb-52e7-427c-a1fa-ad7af76dce95"=list("Mult2"=list("multiplicator"=2),
-#                      "AllProp"=list("multiplicator"=4,"power1"="1", "power2"="2")
-#                      ))
-
 
 propDictList <- list("Mult2"=list(stepId="a18c19cb-52e7-427c-a1fa-ad7af76dce95",
                                   multiplicator=2),

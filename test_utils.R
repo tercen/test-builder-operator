@@ -7,81 +7,76 @@ build_test_data_local <- function( out_table, ctx, test_name,
     test_folder <- paste0( getwd(), '/tests' )
   }
   
-  namespace <- ctx$namespace
-  
-  testTbl <- tbl
+
+  # Save for running the tests locally
+  # Changes the variable name to a more sensible testTbl name
+  testTbl <- out_table
   save(testTbl,file= file.path(test_folder, paste0(test_name, '.Rda')) )
+  
+  namespace <- ctx$namespace
   proj_names <- ctx$names
   
-  # Always present even if there is nothing set for them
+  # .y, .ci and .ri are always present even if there is nothing set for them
   select_names <- c(".y", ".ci",".ri")
-  yAxis <- ''
+  yAxis <- 'y_values'
   xAxis <- ''
   
   has_y <- TRUE  
   has_x <- FALSE  
   
   # Check whether x axis is set
-  yAxis <- "y_values"
-
   if( ".x" %in% proj_names){
     select_names <- append(select_names, ".x")  
     xAxis <- "x_values"
     has_x <- TRUE
   }
   
-  if(!is.null(unname(unlist(ctx$labels))) ){
-    ulbl <- unname(unlist(ctx$labels))
-    for(i in seq(1, length(ulbl))){
-      select_names <- append(select_names, ulbl[[i]])
+  labels <- unname(unlist(ctx$labels))
+  if(!is.null(labels) ){
+    for(i in seq(1, length(labels))){
+      select_names <- append(select_names, labels[[i]])
     }
   }
 
   
-  if(length(ctx$colors) > 0 && unname(unlist(ctx$colors)) != ""){
-    
+  ctx_colors <- unname(unlist(ctx$colors))
+  if(length(ctx_colors) > 0 && ctx_colors != ""){
     if( any(unlist(lapply(ctx$names, function(x){
       ".colorLevels" == x
     })) ) ){
       select_names <- append(select_names, ".colorLevels")  
     }
-    
   }
   
-  # if( ".ci" %in% proj_names){select_names <- append(select_names, ".ci")  }
-  # if( ".ri" %in% proj_names){select_names <- append(select_names, ".ri")  }
-  
-  # Select, if available, .y, .x, .ci and.ri and corresponding row and column tables
   in_tbl <- ctx$select(select_names) 
   in_rtbl <- ctx$rselect()
   in_ctbl <- ctx$cselect()
   
-  
-  
+
   if(has_y == TRUE){
-    in_tbl <- in_tbl%>% rename("y_values"=".y") 
-  }else{
-    in_tbl <- in_tbl%>% select(-".y")
+    in_tbl <- in_tbl %>%
+      rename("y_values"=".y") 
   }
   
   if(has_x == TRUE){
-    in_tbl <- in_tbl%>% rename("x_values"=".x") 
+    in_tbl <- in_tbl %>%
+      rename("x_values"=".x") 
   }
-  
-  
   
   has_row_tbl <- FALSE
   has_col_tbl <- FALSE
   
-  #TODO --> ADD THIS
   has_clr_tbl <- FALSE
   has_lbl_tbl <- FALSE
   
   # .all -> Empty row or column projection table
-  if( names(in_rtbl) != ".all" ){
-    in_rtbl <- in_rtbl %>% mutate( .ri=seq(0,nrow(.)-1) )
+  if( length(names(in_rtbl)) > 0 || names(in_rtbl) != ".all" ){
+    in_rtbl <- in_rtbl %>% 
+      mutate( .ri=seq(0,nrow(.)-1) )
+    
     in_tbl <- dplyr::full_join( in_tbl, in_rtbl, by=".ri" ) %>%
       select(-".ri") 
+    
     has_row_tbl <- TRUE
   }else{
     in_tbl <- select(in_tbl, -".ri")
@@ -92,7 +87,7 @@ build_test_data_local <- function( out_table, ctx, test_name,
     })
   }
   
-  if( names(in_ctbl) != ".all" ){
+  if( length(names(in_ctbl)) > 1 || names(in_ctbl) != ".all" ){
     in_ctbl <- in_ctbl %>% mutate( .ci=seq(0,nrow(.)-1) )
     in_tbl <- dplyr::full_join( in_tbl, in_ctbl, by=".ci" ) %>%
       select(-".ci")
@@ -107,11 +102,9 @@ build_test_data_local <- function( out_table, ctx, test_name,
     })
   }
   
-  if(length(ctx$colors) > 0 && unname(unlist(ctx$colors)) != ""){
-    clrs <- ctx$colors
-    
-    for(i in seq(1,length(clrs))){
-      in_tbl <- cbind(in_tbl, ctx$select(ctx$colors[[i]]) )
+  if(length(ctx_colors) > 0 && ctx_colors != ""){
+    for(i in seq(1,length(ctx_colors))){
+      in_tbl <- cbind(in_tbl, ctx$select(ctx_colors[[i]]) )
     }
     
     if( any(unlist(lapply(ctx$names, function(x){
@@ -121,14 +114,12 @@ build_test_data_local <- function( out_table, ctx, test_name,
     }
   }
   
+  # Find documentId instances and replace them
   if( length(docIdMapping) > 0 ){
-    
-    # Find documentId instances and replace them
     for( i in seq(1, length(docIdMapping))  ){
       in_tbl <- in_tbl %>%
         mutate_all( ~str_replace(., unlist(names(docIdMapping[i])), unname(docIdMapping[i])) )
     }
-    
   }
   
   # If no version is supplied, try to get the latest version in the repo,
@@ -140,8 +131,6 @@ build_test_data_local <- function( out_table, ctx, test_name,
   if(length(version) == 0){
     version <- system("git rev-parse --short HEAD", intern = TRUE)
   }
-  
-  in_tbl_file <- file.path(test_folder, paste0(test_name, "_in", '.csv'))
   
   
   # @TODO
@@ -161,9 +150,6 @@ build_test_data_local <- function( out_table, ctx, test_name,
     out_ctbl <- in_ctbl
     if( length(docIdMapping) > 0 ){
       # Find documentId instances and replace them
-      
-      
-      
       for( i in seq(1, length(docIdMapping))  ){
         out_ctbl <- out_ctbl %>%
           mutate_all( ~str_replace(., unlist(names(docIdMapping[i])), unname(docIdMapping[i])) )
@@ -194,11 +180,11 @@ build_test_data_local <- function( out_table, ctx, test_name,
   })
   
   
-  unbox_labels <- lapply( c(unname(unlist(ctx$labels))), function(x){
+  unbox_labels <- lapply( labels, function(x){
     unbox(x)
   })
   
-  unbox_colors <- lapply( c(unname(unlist(ctx$colors))), function(x){
+  unbox_colors <- lapply( ctx_colors, function(x){
     unbox(x)
   })
   
@@ -210,18 +196,19 @@ build_test_data_local <- function( out_table, ctx, test_name,
                             value=unlist(unname(props)))
   }
   
+
+  in_tbl_file <- file.path(test_folder, paste0(test_name, "_in", '.csv'))
+  write.csv(in_tbl, in_tbl_file, row.names = FALSE)
   
-  
-  # Adicionar aqui os metodos de comapração
   json_data = list("kind"=unbox("OperatorUnitTest"),
                    "name"=unbox(test_name),
                    "namespace"=unbox(namespace),
                    "inputDataUri"=unbox(basename(in_tbl_file)),
                    "outputDataUri"=out_tbl_files,
-                   "columns"=if(unname(unlist(ctx$cnames)) == "") list() else unbox_cnames,
-                   "rows"=if(unname(unlist(ctx$rnames)) == "") list() else c(unname(unlist(ctx$rnames))),
-                   "colors"=if(length(ctx$colors) >0 && unname(unlist(ctx$colors)) == "") list() else unbox_colors,
-                   "labels"=if(is.null(unname(unlist(ctx$labels))) ) list() else unbox_labels,
+                   "columns"=if(length(ctx$cnames) == 1 && unname(unlist(ctx$cnames)) == "") list() else unbox_cnames,
+                   "rows"=if(length(ctx$rnames) == 1 && unname(unlist(ctx$rnames)) == "") list() else c(unname(unlist(ctx$rnames))),
+                   "colors"=if(length(ctx_colors) == 1 && ctx_colors == "") list() else unbox_colors,
+                   "labels"=if(is.null(labels) ) list() else unbox_labels,
                    "yAxis"=unbox(yAxis),
                    "xAxis"=unbox(xAxis),
                    "propertyValues"=propVals,
@@ -254,19 +241,5 @@ build_test_data_local <- function( out_table, ctx, test_name,
   write(json_data, json_file) 
   
   
-  write.csv(in_tbl, in_tbl_file, row.names = FALSE)
+  
 }
-
-
-# "propertyValues": [
-# {
-#   "kind": "PropertyValue",
-#   "name": "multiplicator",
-#   "value": "1"
-# },
-# {
-#   "kind": "PropertyValue",
-#   "name": "seed",
-#   "value": "42"
-# }
-# ]
