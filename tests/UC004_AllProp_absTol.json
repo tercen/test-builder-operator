@@ -1,0 +1,40 @@
+{
+  "kind": "OperatorUnitTest",
+  "name": "UC004_AllProp_absTol",
+  "namespace": "ds010",
+  "inputDataUri": "UC004_AllProp_absTol_in.csv",
+  "outputDataUri": ["UC004_AllProp_absTol_out_1.csv", "UC004_AllProp_absTol_out_2.csv", "UC004_AllProp_absTol_out_3.csv"],
+  "columns": [
+    "Rating.Effectiveness",
+    "Facility.Type"
+  ],
+  "rows": ["Rating.Mortality"],
+  "colors": [
+    "Procedure.Heart Attack.Cost"
+  ],
+  "labels": [
+    "Facility.State"
+  ],
+  "yAxis": "y_values",
+  "xAxis": "x_values",
+  "propertyValues": [
+    {
+      "kind": "PropertyValue",
+      "name": "multiplicator",
+      "value": "4"
+    },
+    {
+      "kind": "PropertyValue",
+      "name": "power1",
+      "value": "1"
+    },
+    {
+      "kind": "PropertyValue",
+      "name": "power2",
+      "value": "2"
+    }
+  ],
+  "generatedOn": "06/03/2022 01:56:20 PM 2022",
+  "version": "0.0.1",
+  "absTol": 0.001
+}

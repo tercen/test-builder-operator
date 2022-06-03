@@ -4,7 +4,38 @@
   "tags": ["basic statistics"],
   "authors": ["tercen"],
   "urls": ["https://github.com/tercen/template_R_operator"],
-  "properties": []
+  "propertyValues": [
+  {
+    "kind": "DoubleProperty",
+    "name": "multiplicator",
+    "defaultValue": 1,
+    "description": ""
+  },
+  {
+    "kind": "BooleanProperty",
+    "name": "should_multiply",
+    "defaultValue": true,
+    "description": ""
+  },
+  
+  {
+    "kind": "EnumeratedProperty",
+    "name": "power1",
+    "defaultValue":"1",
+    "values":[
+      "1",
+      "2"
+    ],
+    "description": ""
+    },
+    
+    {
+    "kind": "StringProperty",
+    "name": "power2",
+    "defaultValue": "1.1" ,
+    "description": ""
+    }
+  ]
 }
 
 

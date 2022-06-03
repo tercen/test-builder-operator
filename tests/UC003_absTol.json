@@ -1,24 +1,22 @@
 {
   "kind": "OperatorUnitTest",
-  "name": "UC001_absTol",
-  "namespace": "ds0",
-  "inputDataUri": "UC001_absTol_in.csv",
-  "outputDataUri": ["UC001_absTol_out_1.csv", "UC001_absTol_out_2.csv", "UC001_absTol_out_3.csv"],
+  "name": "UC003_absTol",
+  "namespace": "ds01",
+  "inputDataUri": "UC003_absTol_in.csv",
+  "outputDataUri": ["UC003_absTol_out_1.csv", "UC003_absTol_out_2.csv", "UC003_absTol_out_3.csv"],
   "columns": [
     "Rating.Effectiveness",
     "Facility.Type"
   ],
   "rows": ["Rating.Mortality"],
-  "colors": [
-    "Rating.Imaging"
-  ],
+  "colors": [],
   "labels": [
     "Facility.State"
   ],
   "yAxis": "y_values",
   "xAxis": "x_values",
   "propertyValues": {},
-  "generatedOn": "06/03/2022 01:56:17 PM 2022",
+  "generatedOn": "06/03/2022 01:56:18 PM 2022",
   "version": "0.0.1",
   "absTol": 0.001
 }
