@@ -9,6 +9,11 @@ library(stringi)
 source('operator_functions.R')
 source('test_utils.R')
 
+# TODO 
+# Clean up code 
+# Handle multiple output tables 
+# Run local testing
+
 # http://127.0.0.1:5402/test-team/w/644ee03767c11f751a0614ac820a4da0/ds/c15f4867-126d-4380-8126-7383f2cca690
 # http://127.0.0.1:5402/test-team/w/644ee03767c11f751a0614ac820a4da0/ds/3d88d8f8-0388-4748-93dc-3262262b6c34
 # Test cases
@@ -20,7 +25,7 @@ stepIdList <- c("c15f4867-126d-4380-8126-7383f2cca690",
                 "a18c19cb-52e7-427c-a1fa-ad7af76dce95")
 
 
-
+# Steps with properties
 propDictList <- list("Mult2"=list(stepId="a18c19cb-52e7-427c-a1fa-ad7af76dce95",
                                   multiplicator=2),
                      "AllProp"=list(stepId="a18c19cb-52e7-427c-a1fa-ad7af76dce95",
