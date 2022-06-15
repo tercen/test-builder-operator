@@ -10,20 +10,15 @@ library(stringi)
 source('operator_functions.R')
 source('test_utils.R')
 
-# Test cases
+# This file is used to create tests for operator which return relations
 wkfId <- "644ee03767c11f751a0614ac820a4da0"
-options("tercen.workflowId"= wkfId)
+options("tercen.workflowId"=wkfId)
 
-stepIdList <- c("5490bf87-8f01-4cfa-a392-036e9eb51f92",
-                "f9e18888-a6ad-4110-a06c-190d35eaf4a9")
+stepIdList <- c("0c241e77-bd95-4720-87f0-8e206cbfbeab")
 
 
 # Steps with properties
 propDictList <- list()
-propDictList <- list("MaxComps"=list(stepId="5490bf87-8f01-4cfa-a392-036e9eb51f92",
-                                      maxComp=8),
-                     "Default"=list(stepId="5490bf87-8f01-4cfa-a392-036e9eb51f92"))
-
 
 for( i in seq(1, length(stepIdList))){
   options("tercen.stepId"=stepIdList[i])  
@@ -50,38 +45,39 @@ for( i in seq(1, length(stepIdList))){
   })
   
   if( any(unname(unlist(has_property_list)))){
-
+    
     prop_list_idx <- which(unname(unlist(has_property_list)))
     for(j in prop_list_idx){
-
+      
       props <- propDictList[j]
       test_suff <- unlist(unname(names(props)))[1]
       props <- props[[test_suff]]
       props$stepId <- NULL
-
+      
       plist <- props
       pnames <- unlist(unname(names(props)))
-
-
+      
+      
       step_name_ex <- paste0(step_name, "_", test_suff)
-
-
+      
+      
       params <- c(ctx, setNames(plist,pnames))
-      res <- do.call('pca_func', params )
-
+      res <- do.call('hclust_func', params )
+      
       build_test_data_local( res, ctx, paste0(step_name_ex, "_absTol"),
                              version = '0.0.1',
                              absTol = 0.001,
                              props=setNames(plist,pnames))
-
-
+      
+      
     }
   }else{
-    res <- pca_func( ctx )
+    res <- hclust_func( ctx )
     
     build_test_data_local( res, ctx, paste0(step_name, "_absTol"),
                            version = '0.0.1',
                            absTol = 0.001)
+
   }
 }
 
