@@ -39,18 +39,8 @@ for( i in seq(1, length(stepIdList))){
   ctx = tercenCtx()
 
   # Get step name
-  wkf <- ctx$client$workflowService$get(wkfId)
-  steps <- wkf$steps
+  step_name <- get_step_name(ctx, wkfId, stepIdList[i])
   
-  current_step <- lapply(steps, function(x){
-    if( x$id == stepIdList[i] ){
-      return(x$name)
-    }else{
-      return(NULL)
-    }
-  } )
-
-  step_name <- unlist(current_step[vapply(current_step, Negate(is.null), NA)])
   print(step_name)
   
   

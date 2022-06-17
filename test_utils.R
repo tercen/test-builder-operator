@@ -32,8 +32,8 @@ build_test_data_local <- function( res_table, ctx, test_name,
 
   # Save for running the tests locally
   # Changes the variable name to a more sensible testTbl name
-  testTbl <- res_table
-  save(testTbl,file= file.path(test_folder, paste0(test_name, '.Rda')) )
+  # testTbl <- res_table
+  # save(testTbl,file= file.path(test_folder, paste0(test_name, '.Rda')) )
   
   in_proj <- create_input_projection(ctx, docIdMapping)
 
@@ -54,6 +54,13 @@ build_test_data_local <- function( res_table, ctx, test_name,
                                           test_folder = test_folder, 
                                           docIdMapping=docIdMapping)  
   }
+  
+  # saved_res <- res_table
+  saved_tbls <- list()
+  for( tbl_file in out_tbl_files){
+    saved_tbls <- append( saved_tbls, list(read.csv( paste0(test_folder, "/", tbl_file) )) )
+  }
+  save(saved_tbls,file= file.path(test_folder, paste0(test_name, '.Rda')) )
   
   
   build_test_input( in_proj, out_tbl_files, ctx, test_name, 
@@ -192,12 +199,14 @@ build_test_for_table <- function( in_proj, res_table, ctx, test_name,
   
 
   out_tbl_files <- c()
+
   tidx <- 1
   out_tbl_files <- append( out_tbl_files, 
                            unbox(paste0(test_name, '_out_', tidx, '.csv') ))
   write.csv(res_table,
             file.path(test_folder, paste0(test_name, '_out_', tidx, '.csv') ) ,
             row.names = FALSE)
+
   tidx <- tidx + 1
   
   
@@ -217,6 +226,7 @@ build_test_for_table <- function( in_proj, res_table, ctx, test_name,
     write.csv(out_ctbl %>% select(-".ci"),
               file.path(test_folder, paste0(test_name, '_out_', tidx, '.csv') ) ,
               row.names = FALSE)
+
     tidx <- tidx + 1
   }
   
@@ -233,9 +243,11 @@ build_test_for_table <- function( in_proj, res_table, ctx, test_name,
       }
     }
     
+
     write.csv(out_rtbl %>% select(-".ri"),
               file.path(test_folder, paste0(test_name, '_out_', tidx, '.csv') ) ,
               row.names = FALSE)
+
   }
   
   return(out_tbl_files)
@@ -460,4 +472,161 @@ build_test_input <- function( in_proj, out_tbl_files, ctx, test_name,
   
   write(json_data, json_file) 
   
+}
+
+
+# TODO: Add the possibility to ignore tables or columns
+run_local_test <- function( res_table, ctx, test_name, 
+                            test_folder = NULL, 
+                            absTol=NULL, relTol=NULL, r2=NULL,
+                            docIdMapping=c()){
+  
+  if( is.null(test_folder)){
+    test_folder <- paste0( getwd(), '/tests' )
+  }
+  
+  tmp_folder <- "/home/rstudio/projects/test_builder_operator/tmp/" #tempdir()
+  
+  
+  print(paste0("Running local test against ", test_name))
+  #save(testTbl,file= file.path(test_folder, paste0(test_name, '.Rda')) )
+  in_proj <- create_input_projection(ctx, docIdMapping)
+  
+  
+  # Check if operator output is a table, list of tables or relation
+  # Then build the tables as they are in Tercen
+  if( class(res_table)[[1]] == "JoinOperator"){
+    out_tbl_files <- build_test_data_for_schema( in_proj, res_table, ctx, test_name, 
+                                                 test_folder = tmp_folder, 
+                                                 docIdMapping=docIdMapping)
+    
+  }else if( class(res_table)[[1]] == "list"){
+    out_tbl_files <- build_test_for_table_list(in_proj, res_table, ctx, test_name, 
+                                               test_folder = tmp_folder, 
+                                               docIdMapping=docIdMapping)  
+    
+  }else{
+    out_tbl_files <- build_test_for_table(in_proj, res_table, ctx, test_name, 
+                                          test_folder = tmp_folder, 
+                                          docIdMapping=docIdMapping)  
+  }
+  
+  res_table_list <- list()
+  for( i in seq(1, length(out_tbl_files))){
+    res_table_list <- append(res_table_list, 
+                        list(read.csv(paste0(tmp_folder, "/", out_tbl_files[i]  ))))
+    
+    unlink(paste0(tmp_folder, "/", out_tbl_files[i]  ))
+  }
+  
+  # loads saved_tbls
+  load( file.path(test_folder, paste0(test_name, '.Rda')) ) 
+  
+  assert( length(res_table_list),
+          length(saved_tbls), metric="eq",
+          msg_fail="Number of resulting tables differ.")
+
+  
+    for( i in seq(1, length(out_tbl_files))){
+    out_tbl <- res_table_list[[i]]
+    svd_tbl <- saved_tbls[[i]]
+    
+    colnames <- names(out_tbl)
+    
+    assert( nrow(out_tbl),
+            nrow(svd_tbl), metric="eq",
+            msg_fail=paste0("Number of rows for table ", i, " do not match."))
+    
+    for( j in colnames){
+      x <- out_tbl[[j]]
+      y <- svd_tbl[[j]]
+      assert( class(x[[1]]),
+              class(y[[1]]), metric="eq",
+              msg_fail=paste0("Datatypes for table ", i, ", column ", colnames[[j]], " do not match."))
+
+      if( class(x[[1]]) == 'character' || class(x[[1]]) == 'factor'){
+        assert( x,
+                y, metric="eq",
+                msg_fail=paste0("Comparison failed for table ", i, ", column ", colnames[[j]], "."))
+      }else{
+        if( !is.null(absTol)){
+          
+          assert( x,
+                  y, metric="abstol", absTol=absTol,
+                  msg_fail=paste0("Comparison failed for table ", i, ", column ", colnames[[j]], "."))
+        }
+        
+        if( !is.null(relTol)){
+          assert( x,
+                  y, metric="reltol", relTol=relTol,
+                  msg_fail=paste0("Comparison failed for table ", i, ", column ", colnames[[j]], "."))
+        }
+        
+        if( !is.null(r2)){
+          assert( x,
+                  y, metric="r2", r2=r2,
+                  msg_fail=paste0("Comparison failed for table ", i, ", column ", colnames[[j]], "."))
+        }
+      }
+      
+    }
+    
+    }
+  print("Test completed succesfully")
+}
+
+assert <- function( x, y, 
+                    msg_fail = '',
+                    metric='eq',
+                    absTol=Inf, 
+                    relTol=1, 
+                    r2=0){
+  if( metric == 'eq' ){
+    if( !all( x == y ) ){
+      stop( paste0("Comparison failed: ", msg_fail) )
+    }
+  }
+  
+  
+  if( metric == 'r2' ){
+    pc <- cor(x, y, method = "pearson")**2
+    if( pc < r2){
+      stop( paste0("Correlation < accepted", msg_fail) )
+    }
+  }
+  
+  if( metric == 'abstol' ){
+    d <- abs(x - y)
+    if( any(d > absTol)){
+      stop( paste0("Difference > accepted [abs]", msg_fail) )
+    }
+  }
+  
+  if( metric == 'abstol' ){
+    d <- x/y
+    d <- abs(1-d[which(!is.nan(d))])
+    if( any(d > relTol)){
+      stop( paste0("Difference > accepted [rel]", msg_fail) )
+    }
+  }
+  
+  
+}
+
+
+
+get_step_name <- function(ctx, wkfId, stepId){
+  wkf <- ctx$client$workflowService$get(wkfId)
+  steps <- wkf$steps
+  
+  current_step <- lapply(steps, function(x){
+    if( x$id == stepId ){
+      return(x$name)
+    }else{
+      return(NULL)
+    }
+  } )
+  
+  step_name <- unlist(current_step[vapply(current_step, Negate(is.null), NA)])
+  return(step_name)
 }
