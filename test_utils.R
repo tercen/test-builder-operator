@@ -1,24 +1,6 @@
 # TODO List
-# Run local testing
-# 
 # Check the data_design project
 
-#/////////////////////////////
-#
-# Helper functions
-#
-#/////////////////////////////
-env_to_df <- function(env){
-  tson <- env$toTson()
-  n <- lapply( tson$columns, function(x){  x$name    } )
-  dff<-data.frame((lapply( tson$columns, function(x){    x$values    } )))
-  names(dff)<- n
-  
-  return(dff)
-}
-
-
-#/////////////////////////////
 
 # Main Entrypoint
 build_test_data_local <- function( res_table, ctx, test_name, 
@@ -32,9 +14,6 @@ build_test_data_local <- function( res_table, ctx, test_name,
 
   # Save for running the tests locally
   # Changes the variable name to a more sensible testTbl name
-  # testTbl <- res_table
-  # save(testTbl,file= file.path(test_folder, paste0(test_name, '.Rda')) )
-  
   in_proj <- create_input_projection(ctx, docIdMapping)
 
 
@@ -443,9 +422,12 @@ build_test_input <- function( in_proj, out_tbl_files, ctx, test_name,
                    "labels"=if(is.null(labels) ) list() else unbox_labels,
                    "yAxis"=unbox(yAxis),
                    "xAxis"=unbox(xAxis),
-                   "propertyValues"=propVals,
                    "generatedOn"=unbox(format(Sys.time(), "%x %X %Y")),
                    "version"=unbox(version))
+
+  if( length(propVals) >0 ){
+    json_data <- c(json_data, "propertyValues"=propVals)
+  }  
   
   if( length(docIdMapping) > 0 ){
     fileUris <- unname((docIdMapping))
@@ -629,4 +611,13 @@ get_step_name <- function(ctx, wkfId, stepId){
   
   step_name <- unlist(current_step[vapply(current_step, Negate(is.null), NA)])
   return(step_name)
+}
+
+env_to_df <- function(env){
+  tson <- env$toTson()
+  n <- lapply( tson$columns, function(x){  x$name    } )
+  dff<-data.frame((lapply( tson$columns, function(x){    x$values    } )))
+  names(dff)<- n
+  
+  return(dff)
 }
