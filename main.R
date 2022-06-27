@@ -9,13 +9,13 @@ source('operator_functions.R')
 
 # ====================================================
 # IF using test_build.R, then uncomment the section below
-ctx = tercenCtx()
-ctx %>%
-  select(.y, .ci, .ri) %>%
-  group_by(.ci, .ri) %>%
-  summarise(mean = cell_mean(.y)) %>%
-  ctx$addNamespace() %>%
-  ctx$save()
+# ctx = tercenCtx()
+# ctx %>%
+#   select(.y, .ci, .ri) %>%
+#   group_by(.ci, .ri) %>%
+#   summarise(mean = cell_mean(.y)) %>%
+#   ctx$addNamespace() %>%
+#   ctx$save()
 
 
 # ====================================================
@@ -25,16 +25,16 @@ ctx %>%
 # options("tercen.workflowId"="b61686f3b2947cf9b9c68af72d01a234")
 # options("tercen.stepId"="a42fd3ad-5ad4-40a3-9741-c6b78beac28a")
 # 
-# ctx = tercenCtx()
-# 
-# scale = ctx$op.value("scale", type=as.logical, default = FALSE)  
-# center = ctx$op.value("center", type=as.logical, default = TRUE)  
-# tol = ctx$op.value("tol", type=as.double, default = 0)
-# maxComp = ctx$op.value("maxComp", type=as.integer, default=4) 
-# 
-# pca_res <- pca_func( ctx, scale = scale, 
-#                      center = center, 
-#                      tol = tol,
-#                      maxComp=maxComp)
-# 
-# save_relation(pca_res, ctx)
+ctx = tercenCtx()
+
+scale = ctx$op.value("scale", type=as.logical, default = FALSE)
+center = ctx$op.value("center", type=as.logical, default = TRUE)
+tol = ctx$op.value("tol", type=as.double, default = 0)
+maxComp = ctx$op.value("maxComp", type=as.integer, default=4)
+
+pca_res <- pca_func( ctx, scale = scale,
+                     center = center,
+                     tol = tol,
+                     maxComp=maxComp)
+
+save_relation(pca_res, ctx)

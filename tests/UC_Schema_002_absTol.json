@@ -1,0 +1,19 @@
+{
+  "kind": "OperatorUnitTest",
+  "name": "UC_Schema_002_absTol",
+  "namespace": "ds10",
+  "inputDataUri": "UC_Schema_002_absTol_in.csv",
+  "outputDataUri": ["UC_Schema_002_absTol_out_1.csv", "UC_Schema_002_absTol_out_2.csv", "UC_Schema_002_absTol_out_3.csv", "UC_Schema_002_absTol_out_4.csv", "UC_Schema_002_absTol_out_5.csv", "UC_Schema_002_absTol_out_6.csv"],
+  "columns": [
+    "Facility.Type"
+  ],
+  "rows": ["Procedure.Heart Attack.Value"],
+  "colors": [],
+  "labels": [],
+  "yAxis": "y_values",
+  "xAxis": "",
+  "generatedOn": "06/27/2022 02:28:23 PM 2022",
+  "version": "0.0.1",
+  "skipCols": ["ds10.PC", ".pc.rids"],
+  "absTol": 0.001
+}

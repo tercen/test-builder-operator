@@ -1,0 +1,26 @@
+{
+  "kind": "OperatorUnitTest",
+  "name": "UC_Schema_001_MaxComps_absTol",
+  "namespace": "ds1",
+  "inputDataUri": "UC_Schema_001_MaxComps_absTol_in.csv",
+  "outputDataUri": ["UC_Schema_001_MaxComps_absTol_out_1.csv", "UC_Schema_001_MaxComps_absTol_out_2.csv", "UC_Schema_001_MaxComps_absTol_out_3.csv", "UC_Schema_001_MaxComps_absTol_out_4.csv", "UC_Schema_001_MaxComps_absTol_out_5.csv", "UC_Schema_001_MaxComps_absTol_out_6.csv"],
+  "columns": [
+    "Facility.Type"
+  ],
+  "rows": ["Procedure.Heart Attack.Value"],
+  "colors": [],
+  "labels": [],
+  "yAxis": "y_values",
+  "xAxis": "",
+  "generatedOn": "06/27/2022 02:28:21 PM 2022",
+  "version": "0.0.1",
+  "propertyValues": [
+    {
+      "kind": "PropertyValue",
+      "name": "maxComp",
+      "value": 8
+    }
+  ],
+  "skipCols": ["ds1.PC", ".pc.rids"],
+  "absTol": 0.001
+}
