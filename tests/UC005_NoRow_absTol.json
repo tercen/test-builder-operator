@@ -15,8 +15,9 @@
     "Facility.State"
   ],
   "yAxis": "y_values",
-  "xAxis": "",
-  "generatedOn": "06/27/2022 03:07:21 PM 2022",
+  "xAxis": "x_values",
+  "generatedOn": "06/27/2022 03:21:35 PM 2022",
   "version": "0.0.1",
+  "skipCols": ["ds03.mean"],
   "absTol": 0.001
 }
