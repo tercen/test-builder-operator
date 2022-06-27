@@ -1,0 +1,23 @@
+{
+  "kind": "OperatorUnitTest",
+  "name": "UC005_NoRow_absTol",
+  "namespace": "ds02",
+  "inputDataUri": "UC005_NoRow_absTol_in.csv",
+  "outputDataUri": ["UC005_NoRow_absTol_out_1.csv", "UC005_NoRow_absTol_out_2.csv"],
+  "columns": [
+    "Facility.Type"
+  ],
+  "rows": [],
+  "colors": [
+    "Rating.Imaging"
+  ],
+  "labels": [
+    "Facility.State"
+  ],
+  "yAxis": "y_values",
+  "xAxis": "x_values",
+  "generatedOn": "06/27/2022 02:49:14 PM 2022",
+  "version": "0.0.1",
+  "skipCols": [],
+  "absTol": 0.001
+}
