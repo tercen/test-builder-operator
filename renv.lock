@@ -36,6 +36,13 @@
       "Repository": "CRAN",
       "Hash": "470851b6d5d0ac559e9d01bb352b4021"
     },
+    "Rcpp": {
+      "Package": "Rcpp",
+      "Version": "1.0.8.3",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Hash": "32e79b908fda56ee57fe518a8d37b864"
+    },
     "askpass": {
       "Package": "askpass",
       "Version": "1.1",
@@ -91,6 +98,13 @@
       "Source": "Repository",
       "Repository": "CRAN",
       "Hash": "83a8afdbe71839506baa9f90eebad7ec"
+    },
+    "fastcluster": {
+      "Package": "fastcluster",
+      "Version": "1.2.3",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Hash": "f032f97ae2ab52d5c0fc51a1b3b2b91d"
     },
     "generics": {
       "Package": "generics",
@@ -155,6 +169,13 @@
       "Repository": "RSPM",
       "Hash": "01f28d4278f15c76cddbea05899c5d6f"
     },
+    "plyr": {
+      "Package": "plyr",
+      "Version": "1.8.7",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Hash": "9c17c6ee41639ebdc1d7266546d3b627"
+    },
     "purrr": {
       "Package": "purrr",
       "Version": "0.3.4",
@@ -169,6 +190,13 @@
       "Repository": "CRAN",
       "Hash": "079cb1f03ff972b30401ed05623cbe92"
     },
+    "reshape2": {
+      "Package": "reshape2",
+      "Version": "1.4.4",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Hash": "bb5996d0bd962d214a11140d77589917"
+    },
     "rlang": {
       "Package": "rlang",
       "Version": "1.0.2",
@@ -182,6 +210,13 @@
       "Source": "Repository",
       "Repository": "CRAN",
       "Hash": "bba431031d30789535745a9627ac9271"
+    },
+    "stringr": {
+      "Package": "stringr",
+      "Version": "1.4.0",
+      "Source": "Repository",
+      "Repository": "RSPM",
+      "Hash": "0759e6b6c0957edb1311028a49a35e76"
     },
     "sys": {
       "Package": "sys",
@@ -217,16 +252,15 @@
     },
     "tercenApi": {
       "Package": "tercenApi",
-      "Version": "0.12.7",
+      "Version": "0.12.8",
       "Source": "GitHub",
-      "Remotes": "tercen/teRcenHttp@1.0.21",
       "RemoteType": "github",
       "RemoteHost": "api.github.com",
       "RemoteRepo": "teRcenApi",
       "RemoteUsername": "tercen",
       "RemoteRef": "HEAD",
-      "RemoteSha": "2c42ab2edef2365bd5d654be331a4ac6e93250f0",
-      "Hash": "9f31e34f5ed2e2d40362e0eaf581f6fb"
+      "RemoteSha": "ee72df38f84d1c9899f1ddd328973d62e2def5e0",
+      "Hash": "d8821efdd32385d0b8b013a51916729d"
     },
     "tibble": {
       "Package": "tibble",
@@ -251,16 +285,16 @@
     },
     "tim": {
       "Package": "tim",
-      "Version": "0.0.10",
+      "Version": "0.0.14",
       "Source": "GitHub",
       "Remotes": "tercen/teRcen@0.12.7",
       "RemoteType": "github",
       "RemoteHost": "api.github.com",
       "RemoteRepo": "tim",
       "RemoteUsername": "tsmonteiro",
-      "RemoteRef": "0.0.10",
-      "RemoteSha": "528e3e2a1509b65482a42b6efb3caa753450e610",
-      "Hash": "63a3d5c255031050fc9b8a4a0368db14"
+      "RemoteRef": "0.0.21",
+      "RemoteSha": "11b954479d1df3aeb7d167fad437184ab0ccd913",
+      "Hash": "51b6691e3c2094f2b28aa36b9fcbbd47"
     },
     "utf8": {
       "Package": "utf8",
