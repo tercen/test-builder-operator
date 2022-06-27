@@ -1,0 +1,10 @@
+{
+  "kind": "TableSchema",
+  "columns": [
+    {
+      "kind": "ColumnSchema",
+      "name": "Procedure.Heart Attack.Value",
+      "type": "string"
+    }
+  ]
+}
