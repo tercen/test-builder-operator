@@ -10,7 +10,7 @@ source("test_utils.R")
 
 test_type <- c("Single", "List", "Schema")
 wkf_id   <- c("644ee03767c11f751a0614ac820a4da0","644ee03767c11f751a0614ac820a4da0","644ee03767c11f751a0614ac820a4da0")
-stp_id <- c("c15f4867-126d-4380-8126-7383f2cca690","512ff26e-1a0c-487c-a390-49204b9b274d","5490bf87-8f01-4cfa-a392-036e9eb51f92")
+stp_id <- c("86eef707-3341-4936-a684-65f0c636e505","512ff26e-1a0c-487c-a390-49204b9b274d","5490bf87-8f01-4cfa-a392-036e9eb51f92")
 
 current_test <- "Single"
 
@@ -26,12 +26,12 @@ switch(current_test,
            summarise(mean = cell_mean(.y)) %>%
            ctx$addNamespace()
          
-         test_name <- 'UC_Single_001_absTol'
-         run_local_test( res_tbl, ctx, test_name, 
-                                     test_folder = NULL, 
-                                     absTol=0.1, docIdMapping=c())
+         test_name <- 'UC005_NoRow_absTol'
+         # run_local_test( res_tbl, ctx, test_name, 
+         #                             test_folder = NULL, 
+         #                             absTol=0.1, docIdMapping=c())
          
-         #ctx$save(res_tbl)
+         ctx$save(res_tbl)
        },
        "List"={
          options("tercen.workflowId"=wkf_id[2])

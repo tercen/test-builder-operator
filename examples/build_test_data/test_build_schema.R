@@ -7,8 +7,13 @@ library(jsonlite)
 
 library(stringi)
 # Function definitions
-source('operator_functions.R')
-source('test_utils.R')
+source('../../operator_functions.R')
+source('../../test_utils.R')
+
+lapply( Sys.glob("../../tests/*.csv"), function(x) { unlink(x) } )
+lapply( Sys.glob("../../tests/*.json"), function(x) { unlink(x) } )
+lapply( Sys.glob("../../tests/*.Rda"), function(x) { unlink(x) } )
+lapply( Sys.glob("../../tests/*.csv.schema"), function(x) { unlink(x) } )
 
 # Test cases
 wkfId <- "644ee03767c11f751a0614ac820a4da0"
@@ -58,9 +63,11 @@ for( i in seq(1, length(stepIdList))){
       params <- c(ctx, setNames(plist,pnames))
       res <- do.call('pca_func', params )
 
-      build_test_data_local( res, ctx, paste0(step_name_ex, "_absTol"),
+      tim::build_test_data( res, ctx, paste0(step_name_ex, "_absTol"),
                              version = '0.0.1',
                              absTol = 0.001,
+                             gen_schema = TRUE,
+                             skipCols=c("PC", ".pc.rids"),
                              props=setNames(plist,pnames))
 
 
@@ -68,8 +75,10 @@ for( i in seq(1, length(stepIdList))){
   }else{
     res <- pca_func( ctx )
     
-    build_test_data_local( res, ctx, paste0(step_name, "_absTol"),
+    tim::build_test_data( res, ctx, paste0(step_name, "_absTol"),
                            version = '0.0.1',
+                          skipCols=c("PC", ".pc.rids"),
+                          gen_schema = TRUE,
                            absTol = 0.001)
   }
 }

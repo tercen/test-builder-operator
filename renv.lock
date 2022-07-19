@@ -85,6 +85,13 @@
       "Repository": "CRAN",
       "Hash": "f0bda1627a7f5d3f9a0b5add931596ac"
     },
+    "drda": {
+      "Package": "drda",
+      "Version": "2.0.1",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Hash": "536f0c2bb39fa494c2fc1d35cb5a8d4d"
+    },
     "ellipsis": {
       "Package": "ellipsis",
       "Version": "0.3.2",
@@ -108,10 +115,10 @@
     },
     "generics": {
       "Package": "generics",
-      "Version": "0.1.2",
+      "Version": "0.1.3",
       "Source": "Repository",
       "Repository": "CRAN",
-      "Hash": "177475892cf4a55865868527654a7741"
+      "Hash": "15e9634c0fcd294799e9b2e929ed1b86"
     },
     "glue": {
       "Package": "glue",
@@ -147,6 +154,13 @@
       "Source": "Repository",
       "Repository": "TERCEN",
       "Hash": "27b03b2685b9424f08521ea09d24860e"
+    },
+    "nplr": {
+      "Package": "nplr",
+      "Version": "0.1-7",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Hash": "9d9f8eed47bc1b22856401d58b06ac51"
     },
     "openssl": {
       "Package": "openssl",
@@ -199,10 +213,10 @@
     },
     "rlang": {
       "Package": "rlang",
-      "Version": "1.0.2",
+      "Version": "1.0.3",
       "Source": "Repository",
       "Repository": "CRAN",
-      "Hash": "04884d9a75d778aca22c7154b8333ec9"
+      "Hash": "9103a8f74b2114a5ed1136b471d8feca"
     },
     "stringi": {
       "Package": "stringi",
@@ -292,9 +306,9 @@
       "RemoteHost": "api.github.com",
       "RemoteRepo": "tim",
       "RemoteUsername": "tsmonteiro",
-      "RemoteRef": "0.0.21",
-      "RemoteSha": "11b954479d1df3aeb7d167fad437184ab0ccd913",
-      "Hash": "51b6691e3c2094f2b28aa36b9fcbbd47"
+      "RemoteRef": "0.0.26",
+      "RemoteSha": "9f83ac19b10a59bf54f63ef2db16cda1fe2aad7c",
+      "Hash": "ad67b2793d880cf3998603b645dfd0a8"
     },
     "utf8": {
       "Package": "utf8",

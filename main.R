@@ -1,7 +1,6 @@
 library(tercen)
 library(tercenApi)
 library(dplyr, warn.conflicts = FALSE)
-library(tim)
 library(jsonlite)
 library(tidyr)
 
