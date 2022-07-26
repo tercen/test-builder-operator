@@ -272,9 +272,9 @@
       "RemoteHost": "api.github.com",
       "RemoteRepo": "teRcenApi",
       "RemoteUsername": "tercen",
-      "RemoteRef": "HEAD",
+      "RemoteRef": "0.12.8",
       "RemoteSha": "ee72df38f84d1c9899f1ddd328973d62e2def5e0",
-      "Hash": "d8821efdd32385d0b8b013a51916729d"
+      "Hash": "7f56a0f6ce9f8892491825e2bc88f37b"
     },
     "tibble": {
       "Package": "tibble",
