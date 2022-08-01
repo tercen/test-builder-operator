@@ -2,7 +2,7 @@
 it <- 0
 max_its <- 5000000
 
-
+mem_track_file <- Sys.getenv('EXTERNALMEMFILE')
 
 get_mem <- function(mem_usage_text, image_name){
   tercen_idx <- which(unlist(lapply(mem_usage$V1, function(x){
@@ -32,11 +32,11 @@ get_mem <- function(mem_usage_text, image_name){
 
 while( it < max_its && !file.exists('stop_ext.txt') ){
   
-  if( file.size('/home/rstudio/mem_track/mem_usage.txt') == 0L ){
+  if( file.size(mem_track_file) == 0L ){
     Sys.sleep(0.25)
     next
   } 
-  mem_usage <- read.csv('/home/rstudio/mem_track/mem_usage.txt', sep=',', header=FALSE)
+  mem_usage <- read.csv(mem_track_file, sep=',', header=FALSE)
   
   
   used_mem <- get_mem(mem_usage, 'tercen_studio-tercen-1') +

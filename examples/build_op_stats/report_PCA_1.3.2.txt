@@ -1,0 +1,10 @@
+ESTIMATED MEMORY USAGE WITH free COMMAND:
+Average: 242mb + 0.00013mb per cell
+Average + 3 SD: 260mb + 0.00018mb per cell
+
+-------------------------------------------------
+-------------------------------------------------
+
+ESTIMATED MEMORY USAGE WITH docker stats COMMAND:
+Average: 118mb + 0.00015mb per cell
+Average + 3 SD: 148mb + 0.00023mb per cell

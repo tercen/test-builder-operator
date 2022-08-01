@@ -7,7 +7,9 @@ library(teRcenHttp)
 library(tercenApi)
 
 source('./examples/build_op_stats/generate_data.R')
-source('./examples/build_op_stats/set_env.R')
+
+
+# source('/home/rstudio/projects/test_builder_operator/examples/build_op_stats/set_env.R')
 
 
 # ::NOTE::
@@ -30,21 +32,21 @@ project_name <- paste0( 'operator_tester',
                         '_', 
                         operator_name)
 
-
+data_design <- ifelse( Sys.getenv("DATADESIGN") == '', 'c03', as.numeric(Sys.getenv("DATADESIGN")) )
 
 
 tasks <- c()
 
 min_cols <- ifelse( Sys.getenv("MINCOLS") == '', 1, as.numeric(Sys.getenv("MINCOLS")) )
-max_cols <- ifelse( Sys.getenv("MAXCOLS") == '', 1000, as.numeric(Sys.getenv("MINCOLS")) )
-n_step_cols <- ifelse( Sys.getenv("NSTEPCOLS") == '', 5, as.numeric(Sys.getenv("MINCOLS")) )
+max_cols <- ifelse( Sys.getenv("MAXCOLS") == '', 1000, as.numeric(Sys.getenv("MAXCOLS")) )
+n_step_cols <- ifelse( Sys.getenv("NSTEPCOLS") == '', 5, as.numeric(Sys.getenv("NSTEPCOLS")) )
 
 
 min_rows <- ifelse( Sys.getenv("MINROWS") == '', 1, as.numeric(Sys.getenv("MINROWS")) )
 max_rows <- ifelse( Sys.getenv("MAXROWS") == '', 1000, as.numeric(Sys.getenv("MAXROWS")) )
 n_step_rows <- ifelse( Sys.getenv("NSTEPROWS") == '', 5, as.numeric(Sys.getenv("NSTEPROWS")) )
 
-n_its <- ifelse( Sys.getenv("OPEXECITS") == '', 3, as.numeric(Sys.getenv("OPEXECITS")) )
+n_its <- ifelse( Sys.getenv("OPEXECITS") == '', 5, as.numeric(Sys.getenv("OPEXECITS")) )
 
 
 
@@ -102,7 +104,8 @@ if( is.null(project) ){
 # Check if operator is installed 
 installed_ops <- client$documentService$findOperatorByOwnerLastModifiedDate(userId)
 
-operator <-Find(function(p) identical(p$name, operator_name), installed_ops)
+operator <-Find(function(p) identical(paste0(p$name, '@', p$version), 
+                                      paste0(operator_name, '@', operator_version)), installed_ops)
 
 # If is.null(operator) is TRUE, then operator is not installed
 if( is.null(operator)){
@@ -135,7 +138,9 @@ if( is.null(operator)){
 }
 
 
-
+print(paste0( "Will test operator: ", 
+              operator$name, "@", operator$version,  
+              "  [ID: ", operator$id," ]"))
 
 
 # ----
@@ -171,6 +176,17 @@ mem_usage_list <- c()
 
 # List of memory usage estimation using the 'docker-stats'
 # running independently on the host machine (see OperatorTest.md)
+is_ext_running <- FALSE
+
+if( file.exists(Sys.getenv('EXTERNALMEMFILE')) ){
+  mtime1 <- file.info(Sys.getenv('EXTERNALMEMFILE'))$mtime
+  Sys.sleep(5)
+  mtime2 <- file.info(Sys.getenv('EXTERNALMEMFILE'))$mtime
+  
+  if( mtime1 != mtime2 ){
+    is_ext_running <- TRUE
+  }
+}
 mem_usage_list_ext <- c()
 
 for( i in seq(1,length(iseq))){
@@ -238,7 +254,11 @@ for( i in seq(1,length(iseq))){
       }
       
       system("Rscript -e 'source(\"track_memory.R\")'", wait=FALSE)
-      system("Rscript -e 'source(\"track_memory_external.R\")'", wait=FALSE)
+      
+      if( is_ext_running == TRUE){
+        system("Rscript -e 'source(\"track_memory_external.R\")'", wait=FALSE)  
+      }
+      
       
 
       # ++++ CubeQuery definition and task execution ++++
@@ -302,13 +322,14 @@ for( i in seq(1,length(iseq))){
       
 
       mem_usage <- as.numeric(scan('mem.txt', character(), quote = ""))
-      mem_usage_ext <- as.numeric(scan('mem_ext.txt', character(), quote = ""))
-      
       used_mem <- max(mem_usage) - min(mem_usage)
-      used_mem_ext <- max(mem_usage_ext) - min(mem_usage_ext)
-      
       mem_usage_list <- append( mem_usage_list, used_mem )
-      mem_usage_list_ext <- append( mem_usage_list_ext, used_mem_ext )
+      
+      if( is_ext_running == TRUE){
+        mem_usage_ext <- as.numeric(scan('mem_ext.txt', character(), quote = ""))
+        used_mem_ext <- max(mem_usage_ext) - min(mem_usage_ext)
+        mem_usage_list_ext <- append( mem_usage_list_ext, used_mem_ext )
+      }
       
       client$tableSchemaService$delete(table_schema$id, table_schema$rev)
     }
@@ -332,10 +353,11 @@ if( file.exists("stop_ext.txt")){
 if( file.exists("mem.txt")){
   system('rm mem.txt')
 }
-# ----
 
+
+# ----
 # PLOTTING 
-# TODO <- Incorporate the two metrics in the plot
+
 it <- 1
 
 idx_columns <- c()
@@ -366,37 +388,39 @@ for( i in seq(1,length(iseq))){
   }
 }
 
-plot( ncells, mem_usage_list, pch=21, bg='blue', ylim=c(50, 450))
-points(ncells, mem_usage_list_ext, pch=21, bg='red')
 
-# ----
-durations <- unlist(lapply( tasks, function(x){
-  as.numeric(x$duration)
-}))
-      
-# summary(lm( mem_usage ~ ncells, data=data.frame(mem_usage, ncells) ))
+plot_type <- 'cells'
+
+ylim <- c( min( min(mem_usage_list), min(mem_usage_list_ext)),
+           max( max(mem_usage_list), max(mem_usage_list_ext)) )
+
+if( plot_type == 'rows' ){
+  num_x <- n_rows
+}else if( plot_type == 'cols' ){
+  num_x <- n_cols
+} else {
+  num_x <- ncells
+}
+
+xlim <- c(0, max(num_x)*1.02)
 
 
+mdl <- NULL
+mdl_ext <- NULL
 
-mdl <- lm( mem_usage  ~ num_cells, 
+
+mdl <- lm( mem_usage  ~ num_x, 
            data=data.frame('mem_usage'=mem_usage_list, 
-                           'num_cells'=ncells,
-                           'num_cols'=n_columns,
-                           'num_rows'=n_rows))
+                           'num_x'=num_x))
 
-summary(mdl)
 
-mdl$coefficients
-
-x_pred <- seq(1, 8e5, by=100)
-coeffs <- mdl$coefficients
+x_pred <- seq(min(xlim), max(xlim), by=50)
 smdl <- summary(mdl)
 sd_coeffs <- c( smdl$coefficients[1,2], smdl$coefficients[2,2] )
 
 y_pred <- smdl$coefficients[1,1] + x_pred * smdl$coefficients[2,1]
 y_pred_3sd <- (smdl$coefficients[1,1] + smdl$coefficients[1,2]*3) + 
-              x_pred * (smdl$coefficients[2,1] + smdl$coefficients[2,2]*3)
-
+  x_pred * (smdl$coefficients[2,1] + smdl$coefficients[2,2]*3)
 
 xticks <- c()
 xtickslabels <- c()
@@ -418,23 +442,59 @@ for( i in seq(min(x_pred), max(x_pred), by=step)){
 }
 
 
+plot_ext <- FALSE
+if(length(mem_usage_list_ext) > 0){
+  plot_ext <- TRUE
+  
+  mdl_ext <- lm( mem_usage  ~ num_x, 
+             data=data.frame('mem_usage'=mem_usage_list_ext, 
+                             'num_x'=num_x))
+  
+  smdl_ext <- summary(mdl_ext)
+  sd_coeffs <- c( smdl_ext$coefficients[1,2], smdl_ext$coefficients[2,2] )
+  
+  y_pred_ext <- smdl_ext$coefficients[1,1] + x_pred * smdl_ext$coefficients[2,1]
+  y_pred_3sd_ext <- (smdl_ext$coefficients[1,1] + smdl_ext$coefficients[1,2]*3) + 
+    x_pred * (smdl_ext$coefficients[2,1] + smdl_ext$coefficients[2,2]*3)
+  
+  pred_memory_mean_title_ext <- paste0('Est. mean mem. (ext.): ', 
+                                   round(smdl_ext$coefficients[1,1]), 'mb + ',
+                                   signif(smdl_ext$coefficients[2,1], digits=2), 'mb per cell' )
+  
+  
+  pred_memory_meansd_title_ext <- paste0('Est. 3sd mem. (ext.): ', 
+                                     round(smdl_ext$coefficients[1,1] + smdl_ext$coefficients[1,2]*3), 'mb + ',
+                                     signif(smdl_ext$coefficients[2,1] + smdl_ext$coefficients[2,2]*3, digits=2), 'mb per cell' )
+}
+
+durations <- unlist(lapply( tasks, function(x){
+  as.numeric(x$duration)
+}))
+
+
 
 pred_memory_mean_title <- paste0('Est. mean mem.: ', 
-                            round(smdl$coefficients[1,1]), 'mb + ',
-                            signif(smdl$coefficients[2,1], digits=2), 'mb per cell' )
+                                 round(smdl$coefficients[1,1]), 'mb + ',
+                                 signif(smdl$coefficients[2,1], digits=2), 'mb per cell' )
 
 
 pred_memory_meansd_title <- paste0('Est. 3sd mem.: ', 
-                            round(smdl$coefficients[1,1] + smdl$coefficients[1,2]*3), 'mb + ',
-                            signif(smdl$coefficients[2,1] + smdl$coefficients[2,2]*3, digits=2), 'mb per cell' )
+                                   round(smdl$coefficients[1,1] + smdl$coefficients[1,2]*3), 'mb + ',
+                                   signif(smdl$coefficients[2,1] + smdl$coefficients[2,2]*3, digits=2), 'mb per cell' )
 
 
 
-plot(x_pred, y_pred, type='l', lwd=3, col=rgb(0.75,0.5,0.5,1),
-     ylim=c(0,1000),
+# ----
+png(filename=Sys.getenv("REPORTIMAGE"), res=200, width = 1200, height=1900)
+if(plot_ext == TRUE){
+  par(mfrow=c(2,1))  
+}
+
+plot(x_pred, y_pred, type='l', lwd=3, col=rgb(0.75,0.5,0.5,1), lty=2,
+     ylim=ylim,
      xlab = "N. columns x N. rows [a.u.]",
      ylab = "Estimated allocated memory [mb]",
-     xaxt='n', axes = FALSE)
+     xaxt='n', axes = FALSE, main="free command")
 
 lines(x_pred, y_pred_3sd, lwd=3, col='red')
 
@@ -442,9 +502,79 @@ lines(x_pred, y_pred_3sd, lwd=3, col='red')
 axis(1, at = xticks, labels=xtickslabels)
 axis(2)
 
-text(220000,800,pred_memory_meansd_title, col=rgb(0.75,0.5,0.5,1))
-text(220000,900,pred_memory_mean_title, col='red')
+
+ylim_steps <- (max(ylim)-min(ylim))/10
+text(max(xlim)/2,min(ylim),pred_memory_meansd_title, col=rgb(0.75,0.5,0.5,1))
+text(max(xlim)/2,min(ylim)+ylim_steps,pred_memory_mean_title, col='red')
+
+
 
 points(ncells, mem_usage_list,
-       pch=21, col='black', bg=rgb( 0.4, 0.4, 0.4, 0.5 ))
+       pch=21, col='black', bg=rgb( 0.4, 0.4, 0.8, 0.5 ))
+
+if(plot_ext == TRUE){
+  plot(x_pred, y_pred_ext, type='l', lwd=3, col=rgb(0.75,0.5,0.5,1), lty=2,
+       ylim=ylim,
+       xlab = "N. columns x N. rows [a.u.]",
+       ylab = "Estimated allocated memory [mb]",
+       main="docker stats command",
+       xaxt='n', axes = FALSE)
+  
+  lines(x_pred, y_pred_3sd_ext, lwd=3, col='red')
+  
+  # X-axis
+  axis(1, at = xticks, labels=xtickslabels)
+  axis(2)
+  
+  text(max(xlim)/2,min(ylim),pred_memory_meansd_title_ext, col=rgb(0.75,0.5,0.5,1))
+  text(max(xlim)/2,min(ylim)+ylim_steps,pred_memory_mean_title_ext, col='red')
+  
+  points(ncells, mem_usage_list_ext,
+         pch=21, col='black', bg=rgb( 0.4, 0.4, 0.8, 0.5 ))
+  
+}
+
+dev.off()
+# ----
+
+out_file <- Sys.getenv("REPORTFILE")
+lines <- c()
+
+
+lines <- append( lines, "ESTIMATED MEMORY USAGE WITH free COMMAND:")
+
+lines <- append( lines, paste0('Average: ', 
+                  round(smdl$coefficients[1,1]), 'mb + ',
+                  signif(smdl$coefficients[2,1], digits=2), 'mb per cell' ))
+
+
+lines <- append( lines, paste0('Average + 3 SD: ', 
+                  round(smdl$coefficients[1,1] + smdl$coefficients[1,2]*3), 'mb + ',
+                  signif(smdl$coefficients[2,1] + smdl$coefficients[2,2]*3, digits=2), 'mb per cell' ))
+
+
+lines <- append( lines, "")
+lines <- append( lines, "-------------------------------------------------")
+lines <- append( lines, "-------------------------------------------------")
+lines <- append( lines, "")
+
+lines <- append( lines, "ESTIMATED MEMORY USAGE WITH docker stats COMMAND:")
+lines <- append( lines, paste0('Average: ', 
+             round(smdl_ext$coefficients[1,1]), 'mb + ',
+             signif(smdl_ext$coefficients[2,1], digits=2), 'mb per cell' ))
+
+
+lines <- append( lines, paste0('Average + 3 SD: ', 
+             round(smdl_ext$coefficients[1,1] + smdl_ext$coefficients[1,2]*3), 'mb + ',
+             signif(smdl_ext$coefficients[2,1] + smdl_ext$coefficients[2,2]*3, digits=2), 'mb per cell' ))
+
+
+fid <- file(out_file)
+writeLines(lines, fid)
+close(fid)
+
+
+
+
+
 
