@@ -6,10 +6,11 @@ library(tercen)
 library(teRcenHttp)
 library(tercenApi)
 
+
 source('./examples/build_op_stats/generate_data.R')
 
-
-# source('/home/rstudio/projects/test_builder_operator/examples/build_op_stats/set_env.R')
+# FOR DEV
+source('/home/rstudio/projects/test_builder_operator/examples/build_op_stats/set_env.R')
 
 
 # ::NOTE::
@@ -32,7 +33,7 @@ project_name <- paste0( 'operator_tester',
                         '_', 
                         operator_name)
 
-data_design <- ifelse( Sys.getenv("DATADESIGN") == '', 'c03', as.numeric(Sys.getenv("DATADESIGN")) )
+data_design <- ifelse( Sys.getenv("DATADESIGN") == '', 'c03', Sys.getenv("DATADESIGN") )
 
 
 tasks <- c()
@@ -150,6 +151,17 @@ print(paste0( "Will test operator: ",
 
 tasks <- c()
 
+nearest_round <- function( num ){
+  fac = 1
+  
+  while( (num %% (10^fac)) != num  ){
+    fac = fac + 1
+  }
+  #
+  return( num -  (num %% (10^(fac-1))) )
+  
+}
+
 iseq <- as.integer(  round(
   seq( min_cols, max_cols, by=(max_cols-min_cols)/n_step_cols)
 ))
@@ -158,6 +170,11 @@ jseq <- as.integer(    round(
   seq( min_rows, max_rows, by=(max_rows-min_rows)/n_step_rows)
 ))
 its <- n_its
+
+
+iseq <- unlist(lapply( iseq, nearest_round ))
+jseq <- unlist(lapply( jseq, nearest_round ))
+
 
 # Function to test if a file is opened by a different process
 file.opened <- function(path) {
@@ -189,149 +206,166 @@ if( file.exists(Sys.getenv('EXTERNALMEMFILE')) ){
 }
 mem_usage_list_ext <- c()
 
+# iseq <- c(700)
+# jseq <- c(700)
+
+
 for( i in seq(1,length(iseq))){
   for( j in seq(1,length(jseq))){
-    if( j < i ) next
-    for( k in seq(1,its)){
-      # ++++ Upload dataset ++++
-      # @TODO Enable generation of other types of data designs
-      df <- generate_c03_data( num_vars=iseq[i], 
-                               num_obs=jseq[j],
-                               replicates=1, # No. data points within each cell
-                               meas_min_val=-6, 
-                               meas_max_val=6 )
-      
-
-      filename = "input_datatable"
-
-      tbl = tercen::dataframe.as.table(df)
-      bytes = memCompress(teRcenHttp::to_tson(tbl$toTson()),
-                          type = 'gzip')
-      
-      fileDoc = FileDocument$new()
-      fileDoc$name = paste0(filename)
-      fileDoc$projectId = project$id
-      fileDoc$acl$owner = project$acl$owner
-      fileDoc$metadata$contentEncoding = 'gzip'
-      
-      
-      fileDoc = client$fileService$upload(fileDoc, bytes)
-      
-      task = CSVTask$new()
-      task$state = InitState$new()
-      task$fileDocumentId = fileDoc$id
-      task$owner = project$acl$owner
-      task$projectId = project$id
-      
-      task = client$taskService$create(task)
-      client$taskService$runTask(task$id)
-      task = client$taskService$waitDone(task$id)
-      if (inherits(task$state, 'FailedState')){
-        stop(task$state$reason)
+    for( cpu_num in seq(1,3)){
+      if( j < i ) next
+      for( k in seq(1,n_its)){
+        # ++++ Upload dataset ++++
+        # @TODO Enable generation of other types of data designs
+        df <- generate_data_from_design( 
+                                 design=data_design,
+                                 num_vars=iseq[i], 
+                                 num_obs=jseq[j],
+                                 replicates=1, # No. data points within each cell
+                                 meas_min_val=-6, 
+                                 meas_max_val=6 )
+        
+  
+        filename = "input_datatable"
+  
+        tbl = tercen::dataframe.as.table(df)
+        bytes = memCompress(teRcenHttp::to_tson(tbl$toTson()),
+                            type = 'gzip')
+        
+        fileDoc = FileDocument$new()
+        fileDoc$name = paste0(filename)
+        fileDoc$projectId = project$id
+        fileDoc$acl$owner = project$acl$owner
+        fileDoc$metadata$contentEncoding = 'gzip'
+        
+        
+        fileDoc = client$fileService$upload(fileDoc, bytes)
+        
+        task = CSVTask$new()
+        task$state = InitState$new()
+        task$fileDocumentId = fileDoc$id
+        task$owner = project$acl$owner
+        task$projectId = project$id
+        
+        task = client$taskService$create(task)
+        client$taskService$runTask(task$id)
+        task = client$taskService$waitDone(task$id)
+        if (inherits(task$state, 'FailedState')){
+          stop(task$state$reason)
+        }
+        
+        
+        table_schema = client$tableSchemaService$get(task$schemaId)
+        client$tableSchemaService$update(table_schema)
+        # END of upload 
+        
+        
+        # ++++ Memory tracking management files ++++
+        if( file.exists("stop.txt")){
+          system('rm stop.txt')
+        }
+        
+        if( file.exists("stop_ext.txt")){
+          system('rm stop_ext.txt')
+        }
+        
+        if( file.exists("mem.txt")){
+          system('rm mem.txt')
+        }
+        
+        if( file.exists("mem_ext.txt")){
+          system('rm mem_ext.txt')
+        }
+        
+        system("Rscript -e 'source(\"track_memory.R\")'", wait=FALSE)
+        
+        if( is_ext_running == TRUE){
+          system("Rscript -e 'source(\"track_memory_external.R\")'", wait=FALSE)  
+        }
+        
+        
+  
+        # ++++ CubeQuery definition and task execution ++++
+        # @TODO Add support for other data designs
+        cube_query = tercenApi::CubeQuery$new()
+        cube_query$relation = tercen::as_relation(table_schema)
+        
+        col = tercenApi::Factor$new()
+        col$name = 'Variable'
+        col$type = 'string'
+        cube_query$colColumns = list(col)
+        
+        row = tercenApi::Factor$new()
+        row$name = 'Observation'
+        row$type = 'string'
+        cube_query$rowColumns = list(row)
+        
+        axis_query = tercenApi::CubeAxisQuery$new()
+        axis_query$yAxis$name = "Measurement"
+        axis_query$yAxis$type = "double"
+        cube_query$axisQueries = list(axis_query)
+        
+        
+        
+        kind <- class(operator)
+        cube_query$operatorSettings$namespace = 'test_ns'
+        cube_query$operatorSettings$operatorRef$operatorId = operator$id
+        cube_query$operatorSettings$operatorRef$operatorKind = kind[1] 
+        cube_query$operatorSettings$operatorRef$name = operator$name
+        cube_query$operatorSettings$operatorRef$version = operator$version
+        
+  
+        
+        # TASK Definition
+        task = tercenApi::RunComputationTask$new()
+        
+  
+        task$query = cube_query
+        task$state = tercenApi::InitState$new()
+        task$owner = project$acl$owner
+        task$projectId = project$id
+        
+        cpu_env <- tercenApi::Pair$new()
+        cpu_env$key <- 'cpu'
+        cpu_env$value <- as.character(cpu_num)
+        
+        ram_env <- tercenApi::Pair$new()
+        ram_env$key <- 'ram'
+        ram_env$value <- format(10 * 1e8, scientific = FALSE, trim = TRUE) # In GB
+        task$environment <- c(cpu_env, ram_env)
+        
+        task = client$taskService$create(task)
+        
+        
+        client$taskService$runTask(task$id)
+        
+        task = client$taskService$waitDone(task$id)
+        tasks <- append( tasks, client$taskService$get(task$id))
+        
+  
+        # Stop memory tracking R scripts
+        system("touch stop.txt")
+        system("touch stop_ext.txt")
+        
+        
+        # Avoid concurrent access, which raises an error
+        while( file.opened('mem.txt')  ){
+          Sys.sleep(0.05)
+        }
+        
+  
+        mem_usage <- as.numeric(scan('mem.txt', character(), quote = ""))
+        used_mem <- max(mem_usage) - min(mem_usage)
+        mem_usage_list <- append( mem_usage_list, used_mem )
+        
+        if( is_ext_running == TRUE){
+          mem_usage_ext <- as.numeric(scan('mem_ext.txt', character(), quote = ""))
+          used_mem_ext <- max(mem_usage_ext) - min(mem_usage_ext)
+          mem_usage_list_ext <- append( mem_usage_list_ext, used_mem_ext )
+        }
+        
+        client$tableSchemaService$delete(table_schema$id, table_schema$rev)
       }
-      
-      
-      table_schema = client$tableSchemaService$get(task$schemaId)
-      client$tableSchemaService$update(table_schema)
-      # END of upload 
-      
-      
-      # ++++ Memory tracking management files ++++
-      if( file.exists("stop.txt")){
-        system('rm stop.txt')
-      }
-      
-      if( file.exists("stop_ext.txt")){
-        system('rm stop_ext.txt')
-      }
-      
-      if( file.exists("mem.txt")){
-        system('rm mem.txt')
-      }
-      
-      if( file.exists("mem_ext.txt")){
-        system('rm mem_ext.txt')
-      }
-      
-      system("Rscript -e 'source(\"track_memory.R\")'", wait=FALSE)
-      
-      if( is_ext_running == TRUE){
-        system("Rscript -e 'source(\"track_memory_external.R\")'", wait=FALSE)  
-      }
-      
-      
-
-      # ++++ CubeQuery definition and task execution ++++
-      # @TODO Add support for other data designs
-      cube_query = tercenApi::CubeQuery$new()
-      cube_query$relation = tercen::as_relation(table_schema)
-      
-      col = tercenApi::Factor$new()
-      col$name = 'Variable'
-      col$type = 'string'
-      cube_query$colColumns = list(col)
-      
-      row = tercenApi::Factor$new()
-      row$name = 'Observation'
-      row$type = 'string'
-      cube_query$rowColumns = list(row)
-      
-      axis_query = tercenApi::CubeAxisQuery$new()
-      axis_query$yAxis$name = "Measurement"
-      axis_query$yAxis$type = "double"
-      cube_query$axisQueries = list(axis_query)
-      
-      
-      
-      kind <- class(operator)
-      cube_query$operatorSettings$namespace = 'test_ns'
-      cube_query$operatorSettings$operatorRef$operatorId = operator$id
-      cube_query$operatorSettings$operatorRef$operatorKind = kind[1] 
-      cube_query$operatorSettings$operatorRef$name = operator$name
-      cube_query$operatorSettings$operatorRef$version = operator$version
-      
-
-      
-      # TASK Definition
-      task = tercenApi::RunComputationTask$new()
-      
-
-      task$query = cube_query
-      task$state = tercenApi::InitState$new()
-      task$owner = project$acl$owner
-      task$projectId = project$id
-      
-      task = client$taskService$create(task)
-      
-      
-      client$taskService$runTask(task$id)
-      
-      task = client$taskService$waitDone(task$id)
-      tasks <- append( tasks, client$taskService$get(task$id))
-      
-
-      # Stop memory tracking R scripts
-      system("touch stop.txt")
-      system("touch stop_ext.txt")
-      
-      
-      # Avoid concurrent access, which raises an error
-      while( file.opened('mem.txt')  ){
-        Sys.sleep(0.05)
-      }
-      
-
-      mem_usage <- as.numeric(scan('mem.txt', character(), quote = ""))
-      used_mem <- max(mem_usage) - min(mem_usage)
-      mem_usage_list <- append( mem_usage_list, used_mem )
-      
-      if( is_ext_running == TRUE){
-        mem_usage_ext <- as.numeric(scan('mem_ext.txt', character(), quote = ""))
-        used_mem_ext <- max(mem_usage_ext) - min(mem_usage_ext)
-        mem_usage_list_ext <- append( mem_usage_list_ext, used_mem_ext )
-      }
-      
-      client$tableSchemaService$delete(table_schema$id, table_schema$rev)
     }
   }
 }
@@ -365,30 +399,50 @@ n_columns <- c()
 idx_rows <- c()
 n_rows <- c()
 
-ncells <- c()
+n_cells <- c()
+n_cpus <- c()
 
 for( i in seq(1,length(iseq))){
   for( j in seq(1,length(jseq))){
-    if( j < i) next
-    for( k in seq(1,its)){
-    
-      if( iseq[i] == 1){
-        idx_rows <- append(idx_rows, it)
-      }
+    if( j < i ) next
+    for( cpu_num in seq(1,3)){
       
-      if( jseq[j] == 1){
-        idx_columns <- append(idx_columns, it)
-      }
-      
-      n_columns <- append(n_columns, iseq[i])
-      n_rows <- append(n_rows, jseq[j])
-      ncells <- append( ncells, iseq[i]*jseq[j])
-      it <- it + 1
+      for( k in seq(1,n_its)){
+        
+          if( iseq[i] == 1){
+            idx_rows <- append(idx_rows, it)
+          }
+          
+          if( jseq[j] == 1){
+            idx_columns <- append(idx_columns, it)
+          }
+          
+          n_columns <- append(n_columns, iseq[i])
+          n_rows <- append(n_rows, jseq[j])
+          n_cpus <- append(n_cpus, cpu_num)
+          n_cells <- append( n_cells, iseq[i]*jseq[j])
+          
+          it <- it + 1
+          
+        }
     }
   }
 }
 
+durations <- unlist(lapply( tasks, function(x){
+  as.numeric(x$duration)
+}))
 
+plot(n_cpus, mem_usage_list)
+points(1, mean(mem_usage_list[which(n_cpus==1)]), pch=21, bg='blue')
+points(2, mean(mem_usage_list[which(n_cpus==2)]), pch=21, bg='blue')
+points(3, mean(mem_usage_list[which(n_cpus==3)]), pch=21, bg='blue')
+
+
+# TEMP marker
+
+# ----
+# ----
 plot_type <- 'cells'
 
 ylim <- c( min( min(mem_usage_list), min(mem_usage_list_ext)),
@@ -399,7 +453,7 @@ if( plot_type == 'rows' ){
 }else if( plot_type == 'cols' ){
   num_x <- n_cols
 } else {
-  num_x <- ncells
+  num_x <- n_cells
 }
 
 xlim <- c(0, max(num_x)*1.02)
@@ -409,8 +463,8 @@ mdl <- NULL
 mdl_ext <- NULL
 
 
-mdl <- lm( mem_usage  ~ num_x, 
-           data=data.frame('mem_usage'=mem_usage_list, 
+mdl <- lm( mem_usage  ~ num_x,
+           data=data.frame('mem_usage'=mem_usage_list,
                            'num_x'=num_x))
 
 
@@ -419,7 +473,7 @@ smdl <- summary(mdl)
 sd_coeffs <- c( smdl$coefficients[1,2], smdl$coefficients[2,2] )
 
 y_pred <- smdl$coefficients[1,1] + x_pred * smdl$coefficients[2,1]
-y_pred_3sd <- (smdl$coefficients[1,1] + smdl$coefficients[1,2]*3) + 
+y_pred_3sd <- (smdl$coefficients[1,1] + smdl$coefficients[1,2]*3) +
   x_pred * (smdl$coefficients[2,1] + smdl$coefficients[2,2]*3)
 
 xticks <- c()
@@ -427,17 +481,17 @@ xtickslabels <- c()
 step <- round((max(x_pred)-min(x_pred))/10)
 for( i in seq(min(x_pred), max(x_pred), by=step)){
   xticks <- append(xticks, i)
-  
+
   lbl <- as.character(i )
-  
+
   if(i >= 1e3){
-    lbl <- paste0(as.character( round(i/1e3)  ), 'K')  
+    lbl <- paste0(as.character( round(i/1e3)  ), 'K')
   }
-  
+
   if(i >= 1e6){
-    lbl <- paste0(as.character( round(i/1e6)  ), 'M')  
+    lbl <- paste0(as.character( round(i/1e6)  ), 'M')
   }
-  
+
   xtickslabels <- append(xtickslabels, lbl)
 }
 
@@ -445,24 +499,24 @@ for( i in seq(min(x_pred), max(x_pred), by=step)){
 plot_ext <- FALSE
 if(length(mem_usage_list_ext) > 0){
   plot_ext <- TRUE
-  
-  mdl_ext <- lm( mem_usage  ~ num_x, 
-             data=data.frame('mem_usage'=mem_usage_list_ext, 
+
+  mdl_ext <- lm( mem_usage  ~ num_x,
+             data=data.frame('mem_usage'=mem_usage_list_ext,
                              'num_x'=num_x))
-  
+
   smdl_ext <- summary(mdl_ext)
   sd_coeffs <- c( smdl_ext$coefficients[1,2], smdl_ext$coefficients[2,2] )
-  
+
   y_pred_ext <- smdl_ext$coefficients[1,1] + x_pred * smdl_ext$coefficients[2,1]
-  y_pred_3sd_ext <- (smdl_ext$coefficients[1,1] + smdl_ext$coefficients[1,2]*3) + 
+  y_pred_3sd_ext <- (smdl_ext$coefficients[1,1] + smdl_ext$coefficients[1,2]*3) +
     x_pred * (smdl_ext$coefficients[2,1] + smdl_ext$coefficients[2,2]*3)
-  
-  pred_memory_mean_title_ext <- paste0('Est. mean mem. (ext.): ', 
+
+  pred_memory_mean_title_ext <- paste0('Est. mean mem. (ext.): ',
                                    round(smdl_ext$coefficients[1,1]), 'mb + ',
                                    signif(smdl_ext$coefficients[2,1], digits=2), 'mb per cell' )
-  
-  
-  pred_memory_meansd_title_ext <- paste0('Est. 3sd mem. (ext.): ', 
+
+
+  pred_memory_meansd_title_ext <- paste0('Est. 3sd mem. (ext.): ',
                                      round(smdl_ext$coefficients[1,1] + smdl_ext$coefficients[1,2]*3), 'mb + ',
                                      signif(smdl_ext$coefficients[2,1] + smdl_ext$coefficients[2,2]*3, digits=2), 'mb per cell' )
 }
@@ -473,12 +527,12 @@ durations <- unlist(lapply( tasks, function(x){
 
 
 
-pred_memory_mean_title <- paste0('Est. mean mem.: ', 
+pred_memory_mean_title <- paste0('Est. mean mem.: ',
                                  round(smdl$coefficients[1,1]), 'mb + ',
                                  signif(smdl$coefficients[2,1], digits=2), 'mb per cell' )
 
 
-pred_memory_meansd_title <- paste0('Est. 3sd mem.: ', 
+pred_memory_meansd_title <- paste0('Est. 3sd mem.: ',
                                    round(smdl$coefficients[1,1] + smdl$coefficients[1,2]*3), 'mb + ',
                                    signif(smdl$coefficients[2,1] + smdl$coefficients[2,2]*3, digits=2), 'mb per cell' )
 
@@ -487,7 +541,7 @@ pred_memory_meansd_title <- paste0('Est. 3sd mem.: ',
 # ----
 png(filename=Sys.getenv("REPORTIMAGE"), res=200, width = 1200, height=1900)
 if(plot_ext == TRUE){
-  par(mfrow=c(2,1))  
+  par(mfrow=c(2,1))
 }
 
 plot(x_pred, y_pred, type='l', lwd=3, col=rgb(0.75,0.5,0.5,1), lty=2,
@@ -509,7 +563,7 @@ text(max(xlim)/2,min(ylim)+ylim_steps,pred_memory_mean_title, col='red')
 
 
 
-points(ncells, mem_usage_list,
+points(n_cells, mem_usage_list,
        pch=21, col='black', bg=rgb( 0.4, 0.4, 0.8, 0.5 ))
 
 if(plot_ext == TRUE){
@@ -519,19 +573,19 @@ if(plot_ext == TRUE){
        ylab = "Estimated allocated memory [mb]",
        main="docker stats command",
        xaxt='n', axes = FALSE)
-  
+
   lines(x_pred, y_pred_3sd_ext, lwd=3, col='red')
-  
+
   # X-axis
   axis(1, at = xticks, labels=xtickslabels)
   axis(2)
-  
+
   text(max(xlim)/2,min(ylim),pred_memory_meansd_title_ext, col=rgb(0.75,0.5,0.5,1))
   text(max(xlim)/2,min(ylim)+ylim_steps,pred_memory_mean_title_ext, col='red')
-  
-  points(ncells, mem_usage_list_ext,
+
+  points(n_cells, mem_usage_list_ext,
          pch=21, col='black', bg=rgb( 0.4, 0.4, 0.8, 0.5 ))
-  
+
 }
 
 dev.off()
@@ -543,12 +597,12 @@ lines <- c()
 
 lines <- append( lines, "ESTIMATED MEMORY USAGE WITH free COMMAND:")
 
-lines <- append( lines, paste0('Average: ', 
+lines <- append( lines, paste0('Average: ',
                   round(smdl$coefficients[1,1]), 'mb + ',
                   signif(smdl$coefficients[2,1], digits=2), 'mb per cell' ))
 
 
-lines <- append( lines, paste0('Average + 3 SD: ', 
+lines <- append( lines, paste0('Average + 3 SD: ',
                   round(smdl$coefficients[1,1] + smdl$coefficients[1,2]*3), 'mb + ',
                   signif(smdl$coefficients[2,1] + smdl$coefficients[2,2]*3, digits=2), 'mb per cell' ))
 
@@ -559,12 +613,12 @@ lines <- append( lines, "-------------------------------------------------")
 lines <- append( lines, "")
 
 lines <- append( lines, "ESTIMATED MEMORY USAGE WITH docker stats COMMAND:")
-lines <- append( lines, paste0('Average: ', 
+lines <- append( lines, paste0('Average: ',
              round(smdl_ext$coefficients[1,1]), 'mb + ',
              signif(smdl_ext$coefficients[2,1], digits=2), 'mb per cell' ))
 
 
-lines <- append( lines, paste0('Average + 3 SD: ', 
+lines <- append( lines, paste0('Average + 3 SD: ',
              round(smdl_ext$coefficients[1,1] + smdl_ext$coefficients[1,2]*3), 'mb + ',
              signif(smdl_ext$coefficients[2,1] + smdl_ext$coefficients[2,2]*3, digits=2), 'mb per cell' ))
 
@@ -575,6 +629,10 @@ close(fid)
 
 
 
-
+# ----
+# CLEAN UP
+client$operatorService$delete(operator$id, operator$rev)
+client$projectService$delete(project$id, project$rev)
+client$teamService$delete(team$id, team$rev)
 
 

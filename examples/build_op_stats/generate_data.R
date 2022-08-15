@@ -1,6 +1,52 @@
 library(dplyr)
 
 
+generate_data_from_design <- function( design='c03',
+                             num_vars=10, 
+                             num_obs=10,
+                             num_groups=5,
+                             replicates=1,
+                             meas_min_val=0, 
+                             meas_max_val=1){
+  design_list <- c( 'c03', 'c04_groups', 'c04_m2')
+  
+  if(!(design %in% design_list)){
+    stop(paste0("Unsupported design ", design, " .Data design must be one of: ", 
+                paste0(design_list, collapse = ",")) )
+  }
+  
+  if( design == 'c03'){
+    data <- generate_c03_data( num_vars=num_vars,
+                               num_obs=num_obs,
+                               replicates=replicates,
+                               meas_min_val = meas_min_val,
+                               meas_max_val = meas_max_val)
+  }
+  
+  
+  if( design == 'c04_groups'){
+    data <- generate_c04_data( num_vars=num_vars,
+                               num_obs=num_obs,
+                               num_groups=num_groups,
+                               meas_min_val = meas_min_val,
+                               meas_max_val = meas_max_val,
+                               type="group")
+  }
+  
+  
+  if( design == 'c04_m2'){
+     data <- generate_c04_data( num_vars=num_vars,
+                                num_obs=num_obs,
+                                num_groups=num_groups,
+                                meas_min_val = meas_min_val,
+                                meas_max_val = meas_max_val,
+                                type="m2")
+  }
+  
+  return(data)
+  
+}
+
 generate_c03_data <- function( num_vars=10, 
                                num_obs=10,
                                replicates=1,
@@ -26,7 +72,7 @@ generate_c04_data <- function( num_vars=10,
                                meas_min_val=0, 
                                meas_max_val=100,
                                type="group"){
-  total_vals   <- num_vars * num_obs * replicates
+  total_vals   <- num_vars * num_obs 
   
   if( type == "group"){
     # generate data
